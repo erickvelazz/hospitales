@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Hospital - Sistema de Gestión</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23f5f5f5' width='192' height='192'/><text x='50%' y='50%' font-size='96' fill='%23333' text-anchor='middle' dy='.3em'>H</text></svg'>">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <header class="header">
+      <h1 class="header-title">Sistema Hospitalario</h1>
+      <p class="header-subtitle">Gestión de Personal y Asistencia</p>
+    </header>
+
+    <main class="main-content">
+      <div class="login-container">
+        <div class="login-card">
+          <h2>Selecciona tu rol</h2>
+          
+          <button class="btn btn-primary" id="btn-admin">
+            <span class="btn-icon">⚙️</span>
+            Usuario Isla
+          </button>
+          
+      <button class="btn btn-primary" id="btn-enfermero">
+        <span class="btn-icon">👨‍⚕️</span>
+        Enfermero
+      </button>
+      
+      <button class="btn btn-primary" id="btn-superadmin">
+        <span class="btn-icon">🛡️</span>
+        Superadmin
+      </button>
+          
+          <button class="btn btn-secondary" id="btn-paciente">
+            <span class="btn-icon">🏥</span>
+            Paciente (QR)
+          </button>
+        </div>
+
+        <div class="login-form hidden" id="login-form">
+          <form id="form-login">
+            <div class="form-group">
+              <label for="username">Usuario</label>
+              <input 
+                type="text" 
+                id="username" 
+                placeholder="Ingresa tu usuario" 
+                required
+              >
+            </div>
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <input 
+                type="password" 
+                id="password" 
+                placeholder="Ingresa tu contraseña" 
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+            <button type="button" class="btn btn-secondary btn-full" id="btn-back">Volver</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
+      authDomain: "hospitales-33dbe.firebaseapp.com",
+      projectId: "hospitales-33dbe",
+      storageBucket: "hospitales-33dbe.firebasestorage.app",
+      messagingSenderId: "843923551776",
+      appId: "1:843923551776:web:5016a26df56d77394fae45",
+      measurementId: "G-X2YJSQBYB0",
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => {
+        if (s) {
+          try { getAnalytics(app) } catch (e) {}
+        }
+      })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+  <script>
+    // Manejadores de navegación de roles
+    document.getElementById('btn-admin').addEventListener('click', () => {
+      window.location.href = 'admin_isla.html';
+    });
+
+    document.getElementById('btn-enfermero').addEventListener('click', () => {
+      window.location.href = 'enfermero.html';
+    });
+
+    document.getElementById('btn-superadmin').addEventListener('click', () => {
+      window.location.href = 'superadmin.html';
+    });
+
+    document.getElementById('btn-paciente').addEventListener('click', () => {
+      // Se accede por QR, pero ofrecemos enlace directo para demo
+      const camaId = prompt('Ingresa el ID de cama (demo):');
+      const token = 'demo-token-' + Date.now();
+      if (camaId) {
+        window.location.href = `paciente.html?cama_id=${camaId}&token=${token}`;
+      }
+    });
+
+    document.getElementById('btn-back').addEventListener('click', () => {
+      document.getElementById('login-form').classList.add('hidden');
+      document.querySelector('.login-card').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>

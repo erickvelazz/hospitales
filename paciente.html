@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Paciente - Sistema Hospitalario</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container paciente-view">
+    <main class="main-content">
+      <div id="validation-error" class="alert alert-error hidden">
+        <p>Token inválido o expirado. Por favor, escanea un QR válido.</p>
+        <button class="btn btn-secondary" onclick="window.history.back()">Volver</button>
+      </div>
+
+      <div id="paciente-content" class="paciente-dashboard hidden">
+        <div class="paciente-card">
+          <h1 class="paciente-title">Información del Paciente</h1>
+          
+          <div class="info-section">
+            <label>Nombre:</label>
+            <p id="paciente-nombre" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Cama:</label>
+            <p id="paciente-cama" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Tratamiento:</label>
+            <p id="paciente-tratamiento" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Notas:</label>
+            <p id="paciente-notas" class="info-value">—</p>
+          </div>
+
+          <div class="paciente-action">
+            <button class="btn btn-help" id="btn-solicitar-ayuda">
+              Solicitar Ayuda
+            </button>
+            <p id="help-feedback" class="help-feedback hidden"></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="js/roles/paciente.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
+      authDomain: "hospitales-33dbe.firebaseapp.com",
+      projectId: "hospitales-33dbe",
+      storageBucket: "hospitales-33dbe.firebasestorage.app",
+      messagingSenderId: "843923551776",
+      appId: "1:843923551776:web:5016a26df56d77394fae45",
+      measurementId: "G-X2YJSQBYB0",
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>
