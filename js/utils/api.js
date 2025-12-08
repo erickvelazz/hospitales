@@ -5,7 +5,7 @@
  */
 
 const API = {
-  baseURL: "http://localhost:3000/api",
+  baseURL: (typeof window !== "undefined" && window.location && window.location.origin ? window.location.origin : "") + "/api",
   timeout: 10000,
 
   /**
@@ -329,16 +329,23 @@ const RealtimeConnection = {
   maxReconnectAttempts: 5,
   reconnectDelay: 3000,
   listeners: {},
+  lastWsURL: null,
 
   /**
    * Conectar a WebSocket
    * TODO: reemplazar con URL real del servidor
    */
-  connect(wsURL = "ws://localhost:3000") {
+  connect(wsURL) {
     console.log("[v0] Intentando conectar WebSocket...")
 
+    const url = wsURL || (typeof window !== "undefined" && window.WS_URL ? window.WS_URL : null)
+    if (!url) {
+      return
+    }
+
     try {
-      this.ws = new WebSocket(wsURL)
+      this.ws = new WebSocket(url)
+      this.lastWsURL = url
 
       this.ws.onopen = () => {
         console.log("[v0] WebSocket conectado")
@@ -373,7 +380,7 @@ const RealtimeConnection = {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++
       console.log(`[v0] Reintentando conexión (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`)
-      setTimeout(() => this.connect(), this.reconnectDelay)
+      setTimeout(() => this.connect(this.lastWsURL), this.reconnectDelay)
     }
   },
 
