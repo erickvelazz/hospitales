@@ -46,6 +46,20 @@ class Paciente {
       document.getElementById("paciente-login")?.classList.add("hidden")
       Session.setUser && Session.setUser({ role: "paciente", id: this.pacienteData.id, nombre: this.pacienteData.nombre })
       Session.setToken && Session.setToken("token-" + Date.now())
+
+      // Asegurar que la cama quede marcada como ocupada cuando tiene paciente
+      try {
+        const camaId = this.pacienteData.cama
+        if (camaId) {
+          await API.put("/camas/" + camaId, { estado: "ocupada", paciente: this.pacienteData.nombre })
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem(
+            "camas",
+            JSON.stringify(arrC.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: this.pacienteData.nombre } : c))),
+          )
+        }
+      } catch {}
     } else {
       errorDiv.classList.remove("hidden")
       contentDiv.classList.add("hidden")
@@ -146,13 +160,14 @@ class Paciente {
     const btn = document.getElementById("btn-solicitar-ayuda")
     const feedback = document.getElementById("help-feedback")
 
-    // Deshabilitar botón por 60 segundos
+    if (!btn || btn.disabled) return
+    // Deshabilitar botón por 5 segundos (antirebote)
     btn.disabled = true
-    btn.textContent = "Solicitud enviada..."
+    btn.textContent = "Enviando solicitud..."
 
     try {
       const result = await API.post("/alertas", {
-        cama_id: this.camaId,
+        cama_id: String(this.camaId),
         paciente_id: this.pacienteData.id,
         paciente: this.pacienteData.nombre,
         isla_id: this.pacienteData.isla_id,
@@ -170,32 +185,35 @@ class Paciente {
 
       try {
         if (window.db && window.firestore) {
-          const { collection, query, where, getDocs } = window.firestore
+          const { collection, query, where, getDocs, doc, getDoc } = window.firestore
           const q = query(collection(window.db, "enfermeros"), where("camas", "array-contains", this.camaId))
           const snap = await getDocs(q)
           const docItem = snap.docs[0]
           if (docItem) alert.nurse_id = docItem.id
+          if (!alert.nurse_id) {
+            const localNurse = window.StorageHelper && window.StorageHelper.getAssignedNurse(this.camaId)
+            if (localNurse) alert.nurse_id = localNurse
+            else if (this.camaId) {
+              const cdoc = await getDoc(doc(window.db, "camas", String(this.camaId)))
+              const cdata = cdoc.exists() ? cdoc.data() : null
+              if (cdata && cdata.enfermero) alert.nurse_id = cdata.enfermero
+            }
+          }
         }
       } catch {}
 
       // Persistencia en Firestore manejada arriba; sin almacenamiento provisional local
 
       if (alert.nurse_id) {
-        const notifyPayload = {
-          nurse_id: alert.nurse_id,
-          notification: {
-            title: "Nueva solicitud de ayuda",
-            body: `Cama ${alert.cama_id} - ${this.pacienteData.nombre}`,
-          },
-          data: {
-            alert_id: alert.id,
-            cama_id: alert.cama_id,
-            paciente: this.pacienteData.nombre,
-            paciente_id: this.pacienteData.id,
-            isla_id: this.pacienteData.isla_id,
-          },
-        }
-        try { await API.post("/notify", notifyPayload) } catch {}
+        // NUEVO: Notificación push real vía backend FCM
+        await (window.pushNotify && window.pushNotify(alert.nurse_id, "Nueva Alerta", "El paciente necesita asistencia", {
+          cama_id: String(this.camaId),
+          isla_id: this.pacienteData.isla_id,
+        }))
+        // Persistir nurse_id en la alerta para facilitar filtrado del lado del enfermero
+        try { if (alert.id) await API.put("/alertas/" + alert.id, { nurse_id: alert.nurse_id }) } catch {}
+      } else {
+        showToast("No hay enfermero asignado a la cama", "error")
       }
 
       if (result.success) {
@@ -220,12 +238,12 @@ class Paciente {
       console.error("[v0] Error:", error)
     }
 
-    // Reactivar botón después de 60 segundos
+    // Reactivar botón después de 5 segundos
     this.helpTimeout = setTimeout(() => {
       btn.disabled = false
       btn.textContent = "Solicitar Ayuda"
       feedback.classList.add("hidden")
-    }, 60000)
+    }, 5000)
   }
 }
 

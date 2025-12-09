@@ -74,6 +74,18 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url)
 
+  // No interceptar navegaciones para evitar problemas con redirecciones del hosting
+  if (event.request.mode === "navigate") {
+    event.respondWith(fetch(event.request))
+    return
+  }
+
+  // Evitar interferir con recursos de terceros (Firebase/Google, CDNs, etc.)
+  if (url.origin !== self.location.origin) {
+    event.respondWith(fetch(event.request))
+    return
+  }
+
   // Estrategia: Network first para API, cache first para estáticos
   if (url.pathname.startsWith("/api/")) {
     // Network first para API
@@ -147,6 +159,7 @@ self.addEventListener("push", (event) => {
 
   try {
     const data = event.data.json()
+    console.log("[v0] Push data:", data)
     const fallbackBody = data && data.data && (data.data.cama_id || data.data.paciente)
       ? `Cama ${data.data.cama_id}${data.data.paciente ? ` - ${data.data.paciente}` : ''}`
       : "Nueva notificación"

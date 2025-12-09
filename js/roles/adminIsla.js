@@ -149,13 +149,6 @@ class AdminIsla {
         <label for="cama-id">ID de Cama</label>
         <input type="text" id="cama-id" placeholder="Ej: 101" required>
       </div>
-      <div class="form-group">
-        <label for="cama-enfermero">Asignar Enfermero</label>
-        <select id="cama-enfermero">
-          <option value="">Selecciona enfermero...</option>
-          ${this.mockEnfermeros.map((e) => `<option value="${e.id}">${e.nombre}</option>`).join("")}
-        </select>
-      </div>
       <button type="submit" class="btn btn-primary btn-full">Guardar Cama</button>
     `
 
@@ -176,6 +169,16 @@ class AdminIsla {
       <div class="form-group">
         <label for="enfermero-email">Email</label>
         <input type="email" id="enfermero-email" placeholder="email@hospital.com" required>
+      </div>
+      <div class="form-group">
+        <label for="enfermero-cama">Asignar Cama</label>
+        <select id="enfermero-cama" required>
+          <option value="">Selecciona cama...</option>
+          ${this.mockCamas
+            .filter((c) => c.estado === "libre" && !c.enfermero)
+            .map((c) => `<option value="${c.id}">${c.id}</option>`)
+            .join("")}
+        </select>
       </div>
       <button type="submit" class="btn btn-primary btn-full">Guardar Enfermero</button>
     `
@@ -219,7 +222,7 @@ class AdminIsla {
     document.getElementById("modal").classList.add("hidden")
   }
 
-  handleFormSubmit(e) {
+  async handleFormSubmit(e) {
     e.preventDefault()
 
     if (this.currentModal === "cama") {
@@ -228,7 +231,7 @@ class AdminIsla {
       const cama = {
         id: document.getElementById("cama-id").value,
         estado: "libre",
-        enfermero: document.getElementById("cama-enfermero").value,
+        enfermero: "",
         isla_id: islaId,
       }
       API.post("/camas", cama)
@@ -252,31 +255,37 @@ class AdminIsla {
     } else if (this.currentModal === "enfermero") {
       const u = Session.getUser && Session.getUser()
       const islaId = u && u.id
+      const camaAsignada = document.getElementById("enfermero-cama").value
+
       const enfermero = {
-        id: "E" + generateUUID().slice(0, 3).toUpperCase(),
         nombre: document.getElementById("enfermero-nombre").value,
         email: document.getElementById("enfermero-email").value,
-        camas: [],
+        camas: camaAsignada ? [camaAsignada] : [],
         isla_id: islaId,
       }
-      API.post("/enfermeros", enfermero)
-        .then((res) => {
-          const created = res && res.success && res.data ? { ...enfermero, id: res.data.id || enfermero.id } : enfermero
-          this.mockEnfermeros.push(created)
-          const raw = localStorage.getItem("enfermeros")
-          const arr = raw ? JSON.parse(raw) : []
-          localStorage.setItem("enfermeros", JSON.stringify([created, ...arr]))
-          showToast("Enfermero agregado", "success")
-          this.renderAllTabs()
-        })
-        .catch(() => {
-          this.mockEnfermeros.push(enfermero)
-          const raw = localStorage.getItem("enfermeros")
-          const arr = raw ? JSON.parse(raw) : []
-          localStorage.setItem("enfermeros", JSON.stringify([enfermero, ...arr]))
-          showToast("Enfermero agregado (local)", "info")
-          this.renderAllTabs()
-        })
+
+      try {
+        const result = await API.post("/enfermeros", enfermero)
+        if (!result.success || !result.data) throw new Error("Error al crear enfermero")
+
+        const created = result.data
+        this.mockEnfermeros.push(created)
+
+        if (camaAsignada) {
+          await API.put("/camas/" + camaAsignada, { enfermero: created.id, estado: "libre" })
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaAsignada ? { ...c, enfermero: created.id } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem("camas", JSON.stringify(arrC.map((c) => (c.id === camaAsignada ? { ...c, enfermero: created.id } : c))))
+        }
+
+        showToast("Enfermero agregado correctamente", "success")
+        this.renderAllTabs()
+        this.closeModal()
+      } catch (error) {
+        console.error("[v0] Error al crear enfermero:", error)
+        showToast("Error al crear enfermero: " + error.message, "error")
+      }
     } else if (this.currentModal === "paciente") {
       const u = Session.getUser && Session.getUser()
       const islaId = u && u.id

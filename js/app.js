@@ -12,7 +12,7 @@
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("service-worker.js")
+      .register("/service-worker.js")
       .then((registration) => {
         console.log("[v0] Service Worker registrado:", registration)
       })
@@ -100,6 +100,32 @@ const NotificationManager = {
     }
   },
 }
+
+// NUEVO: Push Notify hacia backend real (FCM)
+async function pushNotify(nurse_id, title, body, data = {}) {
+  try {
+    const API_URL = (window.__ENV && window.__ENV.BACKEND_URL) || (window.location.origin + "/api")
+    const payload = {
+      nurse_id,
+      notification: { title, body },
+      data,
+    }
+    const res = await fetch(API_URL + "/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+    const txt = await res.text().catch(() => "")
+    console.log("[v0] pushNotify response:", res.status, txt)
+    if (!res.ok) throw new Error("HTTP " + res.status)
+    return true
+  } catch (e) {
+    console.error("[v0] pushNotify error:", e)
+    showToast("No se pudo enviar la notificación", "error")
+    return false
+  }
+}
+window.pushNotify = pushNotify
 
 // ============================================
 // TOAST NOTIFICATIONS

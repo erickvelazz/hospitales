@@ -178,6 +178,7 @@ class Enfermero {
 
     this.assignedBeds = nurse && Array.isArray(nurse.camas) ? nurse.camas : []
     const islaId = nurse && nurse.isla_id
+    this.islaId = islaId
 
     const camasRes = await API.get("/camas", islaId ? { isla_id: islaId } : {})
     if (camasRes.success) this.mockCamas = camasRes.data || []
@@ -204,6 +205,23 @@ class Enfermero {
       const map = raw ? JSON.parse(raw) : {}
       map[user.id] = token
       localStorage.setItem("nurse_fcm_tokens", JSON.stringify(map))
+      this.registerTokenWithBackend(user.id, token)
+    }
+  }
+
+  // NUEVO: registrar token con backend (opcional)
+  async registerTokenWithBackend(nurseId, token) {
+    try {
+      const API_URL = (window.__ENV && window.__ENV.BACKEND_URL) || null
+      if (!API_URL) return
+      const res = await fetch(API_URL + "/register-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nurse_id: nurseId, token }),
+      })
+      console.log("[v0] registerTokenWithBackend:", res.status)
+    } catch (e) {
+      console.log("[v0] registerTokenWithBackend error:", e)
     }
   }
 
@@ -231,8 +249,13 @@ class Enfermero {
       const { collection, onSnapshot, query, where } = window.firestore
       const base = collection(window.db, "alertas")
       let q
-      if (this.assignedBeds && this.assignedBeds.length > 0 && this.assignedBeds.length <= 10) {
+      const u = Session.getUser && Session.getUser()
+      if (u && u.id) {
+        q = query(base, where("nurse_id", "==", u.id), where("confirmado", "==", false))
+      } else if (this.assignedBeds && this.assignedBeds.length > 0 && this.assignedBeds.length <= 10) {
         q = query(base, where("cama_id", "in", this.assignedBeds), where("confirmado", "==", false))
+      } else if (this.islaId) {
+        q = query(base, where("isla_id", "==", this.islaId), where("confirmado", "==", false))
       } else {
         q = query(base, where("confirmado", "==", false))
       }
@@ -253,7 +276,20 @@ class Enfermero {
       return
     }
 
-    // Sin fallback de demo: operar únicamente con Firestore
+    // Fallback: polling periódico cuando no hay Firestore
+    const intervalId = RealtimeConnection.startPolling("/alertas", 4000)
+    this.pollingInterval = intervalId
+    RealtimeConnection.on("message", (msg) => {
+      if (msg && msg.type === "alert" && Array.isArray(msg.data)) {
+        msg.data.forEach((a) => {
+          if (!a.confirmado && (!this.assignedBeds.length || this.assignedBeds.includes(a.cama_id))) {
+            if (!this.mockAlertas.find((x) => x.id === a.id)) {
+              this.handleNewAlert(a)
+            }
+          }
+        })
+      }
+    })
   }
 
   simulateDemoAlert() {

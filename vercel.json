@@ -1,7 +1,13 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "routes": [
-    { "src": "/service-worker.js", "headers": { "Service-Worker-Allowed": "/" } }
+  "outputDirectory": ".",
+  "buildCommand": "",
+  "headers": [
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    }
   ]
 }

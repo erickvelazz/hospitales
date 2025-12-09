@@ -1,0 +1,4136 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.vercel/
+  project.json
+css/
+  styles.css
+js/
+  roles/
+    adminIsla.js
+    enfermero.js
+    paciente.js
+    superadmin.js
+  utils/
+    api.js
+  app.js
+.env.example
+.vercelignore
+admin_isla.html
+enfermero.html
+env.js
+index.html
+manifest.json
+paciente.html
+package.json
+service-worker.js
+superadmin.html
+vercel.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".vercel/project.json">
+{"projectId":"prj_l2fFG2sEbQPLzbPanQZXL0A3dm2f","orgId":"team_6r0NJXmSGecaFwBiXq7hP7Ip","projectName":"trae_hospital-pwa_4y7e","neverMindDeployCard":true}
+</file>
+
+<file path=".vercelignore">
+node_modules
+build
+dist
+.git
+.trae
+.log
+.figma
+</file>
+
+<file path="css/styles.css">
+/* ============================================
+   RESET Y VARIABLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Colores Neutros */
+  --color-white: #ffffff;
+  --color-bg: #f8f8f8;
+  --color-bg-secondary: #f0f0f0;
+  --color-border: #e0e0e0;
+  --color-text: #333333;
+  --color-text-secondary: #666666;
+  --color-text-light: #999999;
+
+  /* Acentos suaves */
+  --color-primary: #4a7c9e; /* Azul grisáceo */
+  --color-primary-hover: #3d6682;
+  --color-secondary: #8b9ba8;
+  --color-accent: #c9b8a0; /* Beige frío */
+
+  /* Estados */
+  --color-success: #6ba383;
+  --color-warning: #d4a574;
+  --color-error: #b85c5c;
+  --color-info: #7a9eb8;
+
+  /* Espaciado */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-base: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 2.5rem;
+
+  /* Tipografía */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-h2: 24px;
+  --font-size-h1: 28px;
+
+  /* Z-index */
+  --z-dropdown: 100;
+  --z-modal: 1000;
+  --z-toast: 1100;
+}
+
+/* ============================================
+   BODY Y BASE
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL
+   ============================================ */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-lg) var(--spacing-base);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-title {
+  font-size: var(--font-size-h1);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.header-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+}
+
+.header-controls {
+  display: flex;
+  gap: var(--spacing-base);
+  margin-top: var(--spacing-sm);
+}
+
+.main-content {
+  flex: 1;
+  padding: var(--spacing-lg) var(--spacing-base);
+  overflow-y: auto;
+}
+
+/* ============================================
+   COMPONENTES: BOTONES
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: 8px;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(74, 124, 158, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-border);
+}
+
+.btn-small {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-help {
+  background-color: var(--color-success);
+  color: var(--color-white);
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  width: 100%;
+  margin-top: var(--spacing-lg);
+}
+
+.btn-help:hover {
+  background-color: #5a9271;
+}
+
+.btn-help:disabled {
+  background-color: var(--color-text-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon {
+  font-size: 24px;
+}
+
+/* ============================================
+   FORMULARIOS
+   ============================================ */
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 124, 158, 0.1);
+}
+
+/* ============================================
+   CARDS Y CONTENEDORES
+   ============================================ */
+
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.card-item {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  transition: all 0.2s ease;
+}
+
+.card-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.card-item h3 {
+  margin-bottom: var(--spacing-base);
+  color: var(--color-primary);
+}
+
+.card-item p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-item-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.card-item-actions .btn {
+  flex: 1;
+}
+
+/* ============================================
+   LOGIN
+   ============================================ */
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.login-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.login-card h2 {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text);
+}
+
+.login-card .btn {
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+}
+
+.login-form {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: var(--spacing-lg);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: var(--spacing-md);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tab-btn:hover {
+  color: var(--color-text);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+
+.status-bar {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.status-bar p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.status-bar strong {
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+}
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section h2 {
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+  border-left: 4px solid var(--color-primary);
+  padding-left: var(--spacing-md);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+/* ============================================
+   ALERTAS Y ESTADOS
+   ============================================ */
+
+.alert {
+  padding: var(--spacing-lg);
+  border-radius: 8px;
+  border-left: 4px solid var(--color-info);
+  background-color: rgba(122, 158, 184, 0.1);
+  color: var(--color-text);
+}
+
+.alert-error {
+  border-left-color: var(--color-error);
+  background-color: rgba(184, 92, 92, 0.1);
+}
+
+.alert-success {
+  border-left-color: var(--color-success);
+  background-color: rgba(107, 163, 131, 0.1);
+}
+
+.alert-warning {
+  border-left-color: var(--color-warning);
+  background-color: rgba(212, 165, 116, 0.1);
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.alert-item {
+  background-color: var(--color-white);
+  border: 2px solid var(--color-warning);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.alert-item h3 {
+  color: var(--color-warning);
+  margin-bottom: var(--spacing-sm);
+}
+
+.alert-item-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: var(--color-white);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text);
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-base);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-base);
+  margin-top: var(--spacing-lg);
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+/* ============================================
+   TOAST
+   ============================================ */
+
+.toast {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-text);
+  color: var(--color-white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 8px;
+  z-index: var(--z-toast);
+  max-width: 90%;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast.success {
+  background-color: var(--color-success);
+}
+
+.toast.error {
+  background-color: var(--color-error);
+}
+
+.toast.warning {
+  background-color: var(--color-warning);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   PACIENTE VIEW
+   ============================================ */
+
+.paciente-view {
+  justify-content: center;
+  padding: var(--spacing-lg);
+}
+
+.paciente-dashboard {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.paciente-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.paciente-title {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.info-section {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.info-section:last-of-type {
+  border-bottom: none;
+}
+
+.info-section label {
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.info-value {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.paciente-action {
+  margin-top: var(--spacing-xl);
+}
+
+.help-feedback {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px;
+  text-align: center;
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.help-feedback.hidden {
+  display: none;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.hidden {
+  display: none !important;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: var(--spacing-xl);
+}
+
+.small-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  margin-top: var(--spacing-sm);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-base);
+}
+
+.list-item {
+  padding: var(--spacing-base);
+  background-color: var(--color-white);
+  border-left: 4px solid var(--color-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+.list-item strong {
+  color: var(--color-primary);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN (Mobile-First)
+   ============================================ */
+
+@media (min-width: 640px) {
+  .main-content {
+    padding: var(--spacing-xl) var(--spacing-xl);
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .login-card {
+    padding: var(--spacing-xl);
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-title {
+    margin-bottom: 0;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .status-bar {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    padding: var(--spacing-xl) var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+</file>
+
+<file path="js/roles/superadmin.js">
+document.addEventListener("DOMContentLoaded", () => {
+  const lista = document.getElementById("lista-islas")
+  const modal = document.getElementById("modal")
+  const btnAdd = document.getElementById("btn-add-isla")
+  const btnClose = document.getElementById("btn-close-modal")
+  const form = document.getElementById("form-modal")
+  const loginBox = document.getElementById("superadmin-login")
+  const loginForm = document.getElementById("superadmin-login-form")
+
+  const accountRaw = localStorage.getItem("superadmin_account")
+  if (!accountRaw) {
+    localStorage.setItem(
+      "superadmin_account",
+      JSON.stringify({ id: "superadmin-1", username: "superadmin", password: "admin123", nombre: "Superadmin" }),
+    )
+  }
+
+  const user = Session.getUser && Session.getUser()
+  if (!user || user.role !== "superadmin") {
+    document.querySelector(".admin-dashboard").classList.add("hidden")
+    loginBox.classList.remove("hidden")
+  }
+
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const u = document.getElementById("su-username").value.trim()
+    const p = document.getElementById("su-password").value.trim()
+    const acc = JSON.parse(localStorage.getItem("superadmin_account") || "{}")
+    if (u === acc.username && p === acc.password) {
+      Session.setUser({ role: "superadmin", id: acc.id, nombre: acc.nombre })
+      Session.setToken("demo-token-" + Date.now())
+      loginBox.classList.add("hidden")
+      document.querySelector(".admin-dashboard").classList.remove("hidden")
+    } else {
+      const toast = document.getElementById("toast")
+      if (toast) {
+        toast.textContent = "Credenciales inválidas"
+        toast.classList.remove("hidden")
+        setTimeout(() => toast.classList.add("hidden"), 2000)
+      }
+      return
+    }
+  })
+
+  let islas = []
+
+  async function loadIslas() {
+    lista.innerHTML = ""
+    const res = await API.get("/islas")
+    if (res.success && Array.isArray(res.data)) {
+      islas = res.data
+    } else {
+      const raw = localStorage.getItem("islas")
+      islas = raw ? JSON.parse(raw) : []
+    }
+    renderIslas()
+  }
+
+  function saveLocalFallback() {
+    localStorage.setItem("islas", JSON.stringify(islas))
+  }
+
+  function renderIslas() {
+    lista.innerHTML = ""
+    if (!islas.length) {
+      const p = document.createElement("p")
+      p.className = "empty-state"
+      p.textContent = "Sin islas creadas"
+      lista.appendChild(p)
+      return
+    }
+    islas.forEach((isla) => {
+      const card = document.createElement("div")
+      card.className = "card"
+      const title = document.createElement("h3")
+      title.textContent = isla.nombre
+      const meta = document.createElement("p")
+      meta.className = "small-text"
+      meta.textContent = `Ubicación: ${isla.ubicacion} · Usuario: ${isla.username}`
+      card.appendChild(title)
+      card.appendChild(meta)
+      lista.appendChild(card)
+    })
+  }
+
+  function openModal() {
+    modal.classList.remove("hidden")
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden")
+    form.reset()
+  }
+
+  btnAdd.addEventListener("click", openModal)
+  btnClose.addEventListener("click", closeModal)
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault()
+    const nombre = document.getElementById("isla-nombre").value.trim()
+    const username = document.getElementById("isla-username").value.trim()
+    const password = document.getElementById("isla-password").value.trim()
+    const ubicacion = document.getElementById("isla-ubicacion").value.trim()
+    if (!nombre || !username || !password || !ubicacion) return
+    const nueva = { nombre, username, password, ubicacion }
+    const res = await API.post("/islas", nueva)
+    if (res.success) {
+      if (res.data && res.data.id) {
+        islas = [res.data, ...islas]
+      } else {
+        islas = [{ id: Date.now().toString(), ...nueva }, ...islas]
+      }
+    } else {
+      islas = [{ id: Date.now().toString(), ...nueva }, ...islas]
+      saveLocalFallback()
+    }
+    renderIslas()
+    closeModal()
+    const toast = document.getElementById("toast")
+    if (toast) {
+      toast.textContent = "Isla creada"
+      toast.classList.remove("hidden")
+      setTimeout(() => toast.classList.add("hidden"), 2000)
+    }
+  })
+
+  loadIslas()
+})
+</file>
+
+<file path="js/app.js">
+/**
+ * Lógica central de la PWA
+ * - Registro de Service Worker
+ * - Manejo de sesiones
+ * - Utilidades compartidas
+ */
+
+// ============================================
+// SERVICE WORKER REGISTRATION
+// ============================================
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("service-worker.js")
+      .then((registration) => {
+        console.log("[v0] Service Worker registrado:", registration)
+      })
+      .catch((error) => {
+        console.log("[v0] Error al registrar Service Worker:", error)
+      })
+  })
+}
+
+// ============================================
+// SESSION MANAGEMENT
+// ============================================
+
+const Session = {
+  setUser(user) {
+    localStorage.setItem("user", JSON.stringify(user))
+  },
+
+  getUser() {
+    const user = localStorage.getItem("user")
+    return user ? JSON.parse(user) : null
+  },
+
+  setToken(token) {
+    localStorage.setItem("auth_token", token)
+  },
+
+  getToken() {
+    return localStorage.getItem("auth_token")
+  },
+
+  logout() {
+    localStorage.removeItem("user")
+    localStorage.removeItem("auth_token")
+    localStorage.removeItem("notifications_enabled")
+    window.location.href = "index.html"
+  },
+
+  isLoggedIn() {
+    return !!this.getToken()
+  },
+}
+
+// ============================================
+// NOTIFICATIONS MANAGEMENT
+// ============================================
+
+const NotificationManager = {
+  enabled: true,
+
+  async init() {
+    this.enabled = localStorage.getItem("notifications_enabled") !== "false"
+
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission()
+    }
+  },
+
+  toggle() {
+    this.enabled = !this.enabled
+    localStorage.setItem("notifications_enabled", this.enabled ? "true" : "false")
+    return this.enabled
+  },
+
+  async show(title, options = {}) {
+    if (!this.enabled) return
+
+    // Intentar con Service Worker
+    if ("serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.ready
+        registration.showNotification(title, {
+          badge:
+            'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%234a7c9e" width="192" height="192"/><text x="50%" y="50%" font-size="96" fill="white" text-anchor="middle" dy=".3em">H</text></svg>',
+          ...options,
+        })
+      } catch (e) {
+        console.log("[v0] No se pudo mostrar notificación con SW")
+      }
+    }
+
+    // Fallback a Notification API
+    if (Notification.permission === "granted") {
+      new Notification(title, options)
+    }
+  },
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+
+function showToast(message, type = "info", duration = 3000) {
+  const toast = document.getElementById("toast")
+  if (!toast) return
+
+  toast.textContent = message
+  toast.className = `toast ${type}`
+  toast.classList.remove("hidden")
+
+  setTimeout(() => {
+    toast.classList.add("hidden")
+  }, duration)
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+
+function generateUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === "x" ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+function getQueryParam(param) {
+  const params = new URLSearchParams(window.location.search)
+  return params.get(param)
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  NotificationManager.init()
+})
+
+// Logout button handler (generic)
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("btn-logout")
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      Session.logout()
+    })
+  }
+})
+</file>
+
+<file path=".env.example">
+FIREBASE_API_KEY=AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A
+FIREBASE_AUTH_DOMAIN=hospitales-33dbe.firebaseapp.com
+FIREBASE_PROJECT_ID=hospitales-33dbe
+FIREBASE_STORAGE_BUCKET=hospitales-33dbe.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=843923551776
+FIREBASE_APP_ID=1:843923551776:web:5016a26df56d77394fae45
+FIREBASE_MEASUREMENT_ID=G-X2YJSQBYB0
+VAPID_KEY=BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8
+</file>
+
+<file path="env.js">
+window.__ENV = {
+  FIREBASE_API_KEY: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
+  FIREBASE_AUTH_DOMAIN: "hospitales-33dbe.firebaseapp.com",
+  FIREBASE_PROJECT_ID: "hospitales-33dbe",
+  FIREBASE_STORAGE_BUCKET: "hospitales-33dbe.firebasestorage.app",
+  FIREBASE_MESSAGING_SENDER_ID: "843923551776",
+  FIREBASE_APP_ID: "1:843923551776:web:5016a26df56d77394fae45",
+  FIREBASE_MEASUREMENT_ID: "G-X2YJSQBYB0",
+  VAPID_KEY: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+}
+</file>
+
+<file path="manifest.json">
+{
+  "name": "Hospital - Sistema de Gestión de Personal y Asistencia",
+  "short_name": "Hospital PWA",
+  "description": "PWA para gestión de personal hospitalario y solicitudes de pacientes",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#4a7c9e",
+  "background_color": "#f8f8f8",
+  "categories": ["medical"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%234a7c9e' width='192' height='192'/><text x='50%' y='50%' font-size='96' fill='white' text-anchor='middle' dy='.3em'>H</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%234a7c9e' width='512' height='512'/><text x='50%' y='50%' font-size='256' fill='white' text-anchor='middle' dy='.3em'>H</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f8f8f8' width='540' height='720'/><rect fill='%234a7c9e' width='540' height='80'/><text x='270' y='45' font-size='32' fill='white' text-anchor='middle' dy='.3em' font-weight='bold'>Hospital PWA</text></svg>",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    }
+  ]
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "my-v0-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'no build script'"
+  }
+}
+</file>
+
+<file path="superadmin.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Superadmin</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <header class="header">
+      <h1 class="header-title">Superadmin</h1>
+      <button class="btn btn-small" id="btn-logout">Cerrar sesión</button>
+    </header>
+
+    <main class="main-content">
+      <div class="login-container hidden" id="superadmin-login">
+        <div class="login-card">
+          <h2>Acceso Superadmin</h2>
+          <form id="superadmin-login-form">
+            <div class="form-group">
+              <label for="su-username">Usuario</label>
+              <input type="text" id="su-username" required>
+            </div>
+            <div class="form-group">
+              <label for="su-password">Contraseña</label>
+              <input type="password" id="su-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+          </form>
+        </div>
+      </div>
+      <div class="admin-dashboard">
+        <section class="section">
+          <div class="section-header">
+            <h2>Gestión de Islas</h2>
+            <button class="btn btn-secondary" id="btn-add-isla">+ Nueva Isla</button>
+          </div>
+          <div id="lista-islas" class="card-grid"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-modal">&times;</button>
+      <h2 id="modal-title">Nueva Isla</h2>
+      <form id="form-modal">
+        <div class="form-group">
+          <label for="isla-nombre">Nombre</label>
+          <input type="text" id="isla-nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="isla-username">Usuario</label>
+          <input type="text" id="isla-username" required>
+        </div>
+        <div class="form-group">
+          <label for="isla-password">Contraseña</label>
+          <input type="password" id="isla-password" required>
+        </div>
+        <div class="form-group">
+          <label for="isla-ubicacion">Ubicación</label>
+          <input type="text" id="isla-ubicacion" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Crear Isla</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="js/roles/superadmin.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
+      authDomain: "hospitales-33dbe.firebaseapp.com",
+      projectId: "hospitales-33dbe",
+      storageBucket: "hospitales-33dbe.firebasestorage.app",
+      messagingSenderId: "843923551776",
+      appId: "1:843923551776:web:5016a26df56d77394fae45",
+      measurementId: "G-X2YJSQBYB0",
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported().then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } }).catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>
+</file>
+
+<file path="js/roles/adminIsla.js">
+/**
+ * Lógica específica para Usuario Isla (Admin)
+ * - CRUD de camas, enfermeros, pacientes
+ * - Generador QR
+ * - Asignación visual
+ */
+
+// Usar Session y API globales de js/app.js y js/utils/api.js
+
+
+class AdminIsla {
+  constructor() {
+    this.mockCamas = []
+    this.mockEnfermeros = []
+    this.mockPacientes = []
+    this.currentModal = null
+    this.init()
+  }
+
+  init() {
+    this.checkAuth()
+    this.loadData()
+    this.setupEventListeners()
+    this.renderAllTabs()
+  }
+
+  checkAuth() {
+    const box = document.getElementById("isla-login")
+    const form = document.getElementById("isla-login-form")
+    const dash = document.querySelector(".admin-dashboard")
+
+    // Credenciales por defecto para demo/local: admin/admin123 e isla/isla123
+    const rawAccounts = localStorage.getItem("isla_accounts")
+    if (!rawAccounts) {
+      localStorage.setItem(
+        "isla_accounts",
+        JSON.stringify([
+          { id: "admin-1", username: "admin", password: "admin123", nombre: "Administrador" },
+          { id: "isla-1", username: "isla", password: "isla123", nombre: "Usuario Isla" },
+        ]),
+      )
+    } else {
+      try {
+        const accs = JSON.parse(rawAccounts)
+        const hasAdmin = accs.some((a) => a.username === "admin")
+        if (!hasAdmin) {
+          accs.push({ id: "admin-1", username: "admin", password: "admin123", nombre: "Administrador" })
+          localStorage.setItem("isla_accounts", JSON.stringify(accs))
+        }
+      } catch {}
+    }
+
+    const user = Session.getUser && Session.getUser()
+    if (!user || user.role !== "isla") {
+      dash.classList.add("hidden")
+      box.classList.remove("hidden")
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      const u = document.getElementById("isla-username").value.trim()
+      const p = document.getElementById("isla-password").value.trim()
+      let match = null
+      const res = await API.get("/islas")
+      if (res.success && Array.isArray(res.data)) {
+        match = res.data.find((i) => i.username === u && i.password === p)
+      }
+      if (!match) {
+        const localIslasRaw = localStorage.getItem("islas")
+        const localIslas = localIslasRaw ? JSON.parse(localIslasRaw) : []
+        match = localIslas.find((i) => i.username === u && i.password === p)
+      }
+      if (!match) {
+        const accounts = JSON.parse(localStorage.getItem("isla_accounts") || "[]")
+        match = accounts.find((a) => a.username === u && a.password === p)
+      }
+      if (match) {
+        const nombre = match.nombre || "Usuario Isla"
+        const id = match.id || (match.nombre ? match.nombre.toLowerCase().replace(/\s+/g, "-") : "isla")
+        Session.setUser({ role: "isla", id, nombre })
+        Session.setToken("demo-token-" + Date.now())
+        box.classList.add("hidden")
+        dash.classList.remove("hidden")
+        this.loadData()
+        this.renderAllTabs()
+        this.updateQRIds()
+      } else {
+        showToast("Credenciales inválidas", "error")
+      }
+    })
+  }
+
+  async loadData() {
+    const u = Session.getUser && Session.getUser()
+    const islaId = u && u.id
+    const [cRes, eRes, pRes] = await Promise.all([
+      API.get("/camas", { isla_id: islaId }),
+      API.get("/enfermeros", { isla_id: islaId }),
+      API.get("/pacientes", { isla_id: islaId }),
+    ])
+    if (cRes.success) this.mockCamas = cRes.data
+    if (eRes.success) this.mockEnfermeros = eRes.data
+    if (pRes.success) this.mockPacientes = pRes.data
+    this.renderAllTabs()
+    this.updateQRIds()
+  }
+
+  setupEventListeners() {
+    // Tabs
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => this.switchTab(e.target.dataset.tab))
+    })
+
+    // Botones de agregar
+    document.getElementById("btn-add-cama")?.addEventListener("click", () => this.openModalCama())
+    document.getElementById("btn-add-enfermero")?.addEventListener("click", () => this.openModalEnfermero())
+    document.getElementById("btn-add-paciente")?.addEventListener("click", () => this.openModalPaciente())
+
+    // QR Generator
+    document.getElementById("btn-generate-qr")?.addEventListener("click", () => this.generateQR())
+    document.getElementById("qr-type")?.addEventListener("change", () => this.updateQRIds())
+
+    // Modal
+    document.getElementById("btn-close-modal")?.addEventListener("click", () => this.closeModal())
+    document.getElementById("form-modal")?.addEventListener("submit", (e) => this.handleFormSubmit(e))
+  }
+
+  switchTab(tabName) {
+    // Actualizar botones
+    document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.remove("active"))
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add("active")
+
+    // Actualizar contenido
+    document.querySelectorAll(".tab-content").forEach((tab) => tab.classList.remove("active"))
+    document.getElementById(`tab-${tabName}`).classList.add("active")
+  }
+
+  // ============================================
+  // MODAL MANAGEMENT
+  // ============================================
+
+  openModalCama() {
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Nueva Cama"
+
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="cama-id">ID de Cama</label>
+        <input type="text" id="cama-id" placeholder="Ej: 101" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar Cama</button>
+    `
+
+    modal.classList.remove("hidden")
+    this.currentModal = "cama"
+  }
+
+  openModalEnfermero() {
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Nuevo Enfermero"
+
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="enfermero-nombre">Nombre</label>
+        <input type="text" id="enfermero-nombre" placeholder="Nombre completo" required>
+      </div>
+      <div class="form-group">
+        <label for="enfermero-email">Email</label>
+        <input type="email" id="enfermero-email" placeholder="email@hospital.com" required>
+      </div>
+      <div class="form-group">
+        <label for="enfermero-cama">Asignar Cama</label>
+        <select id="enfermero-cama" required>
+          <option value="">Selecciona cama...</option>
+          ${this.mockCamas
+            .filter((c) => c.estado === "libre" && !c.enfermero)
+            .map((c) => `<option value="${c.id}">${c.id}</option>`)
+            .join("")}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar Enfermero</button>
+    `
+
+    modal.classList.remove("hidden")
+    this.currentModal = "enfermero"
+  }
+
+  openModalPaciente() {
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Nuevo Paciente"
+
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="paciente-nombre">Nombre</label>
+        <input type="text" id="paciente-nombre" placeholder="Nombre completo" required>
+      </div>
+      <div class="form-group">
+        <label for="paciente-cama">Asignar Cama</label>
+        <select id="paciente-cama">
+          <option value="">Selecciona cama...</option>
+          ${this.mockCamas
+            .filter((c) => c.estado === "libre")
+            .map((c) => `<option value="${c.id}">${c.id}</option>`)
+            .join("")}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="paciente-tratamiento">Tratamiento</label>
+        <textarea id="paciente-tratamiento" placeholder="Descripción del tratamiento" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar Paciente</button>
+    `
+
+    modal.classList.remove("hidden")
+    this.currentModal = "paciente"
+  }
+
+  closeModal() {
+    document.getElementById("modal").classList.add("hidden")
+  }
+
+  async handleFormSubmit(e) {
+    e.preventDefault()
+
+    if (this.currentModal === "cama") {
+      const u = Session.getUser && Session.getUser()
+      const islaId = u && u.id
+      const cama = {
+        id: document.getElementById("cama-id").value,
+        estado: "libre",
+        enfermero: "",
+        isla_id: islaId,
+      }
+      API.post("/camas", cama)
+        .then((res) => {
+          const created = res && res.success && res.data ? { ...cama, id: res.data.id || cama.id } : cama
+          this.mockCamas.push(created)
+          const raw = localStorage.getItem("camas")
+          const arr = raw ? JSON.parse(raw) : []
+          localStorage.setItem("camas", JSON.stringify([created, ...arr]))
+          showToast("Cama agregada", "success")
+          this.renderAllTabs()
+        })
+        .catch(() => {
+          this.mockCamas.push(cama)
+          const raw = localStorage.getItem("camas")
+          const arr = raw ? JSON.parse(raw) : []
+          localStorage.setItem("camas", JSON.stringify([cama, ...arr]))
+          showToast("Cama agregada (local)", "info")
+          this.renderAllTabs()
+        })
+    } else if (this.currentModal === "enfermero") {
+      const u = Session.getUser && Session.getUser()
+      const islaId = u && u.id
+      const camaAsignada = document.getElementById("enfermero-cama").value
+
+      const enfermero = {
+        nombre: document.getElementById("enfermero-nombre").value,
+        email: document.getElementById("enfermero-email").value,
+        camas: camaAsignada ? [camaAsignada] : [],
+        isla_id: islaId,
+      }
+
+      try {
+        const result = await API.post("/enfermeros", enfermero)
+        if (!result.success || !result.data) throw new Error("Error al crear enfermero")
+
+        const created = result.data
+        this.mockEnfermeros.push(created)
+
+        if (camaAsignada) {
+          await API.put("/camas/" + camaAsignada, { enfermero: created.id, estado: "libre" })
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaAsignada ? { ...c, enfermero: created.id } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem("camas", JSON.stringify(arrC.map((c) => (c.id === camaAsignada ? { ...c, enfermero: created.id } : c))))
+        }
+
+        showToast("Enfermero agregado correctamente", "success")
+        this.renderAllTabs()
+        this.closeModal()
+      } catch (error) {
+        console.error("[v0] Error al crear enfermero:", error)
+        showToast("Error al crear enfermero: " + error.message, "error")
+      }
+    } else if (this.currentModal === "paciente") {
+      const u = Session.getUser && Session.getUser()
+      const islaId = u && u.id
+      const paciente = {
+        id: "P" + (this.mockPacientes.length + 1),
+        nombre: document.getElementById("paciente-nombre").value,
+        cama: document.getElementById("paciente-cama").value,
+        tratamiento: document.getElementById("paciente-tratamiento").value,
+        isla_id: islaId,
+      }
+      API.post("/pacientes", paciente)
+        .then((res) => {
+          const created = res && res.success && res.data ? { ...paciente, id: res.data.id || paciente.id } : paciente
+          this.mockPacientes.push(created)
+          const raw = localStorage.getItem("pacientes")
+          const arr = raw ? JSON.parse(raw) : []
+          localStorage.setItem("pacientes", JSON.stringify([created, ...arr]))
+          // Actualizar cama a ocupada y asignar nombre del paciente
+          const camaId = created.cama
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: created.nombre } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem(
+            "camas",
+            JSON.stringify(arrC.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: created.nombre } : c))),
+          )
+          API.put("/camas/" + camaId, { estado: "ocupada", paciente: created.nombre }).catch(() => {})
+          showToast("Paciente agregado", "success")
+          this.renderAllTabs()
+        })
+        .catch(() => {
+          this.mockPacientes.push(paciente)
+          const raw = localStorage.getItem("pacientes")
+          const arr = raw ? JSON.parse(raw) : []
+          localStorage.setItem("pacientes", JSON.stringify([paciente, ...arr]))
+          // Actualizar cama localmente
+          const camaId = paciente.cama
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: paciente.nombre } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem(
+            "camas",
+            JSON.stringify(arrC.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: paciente.nombre } : c))),
+          )
+          showToast("Paciente agregado (local)", "info")
+          this.renderAllTabs()
+        })
+    } else if (this.currentModal === "cama_edit") {
+      const id = this.editEntityId
+      const newEnfermero = document.getElementById("cama-enfermero").value
+      const camaPrev = this.mockCamas.find((c) => c.id === id)
+      const prevEnfermero = camaPrev && camaPrev.enfermero
+      API.put("/camas/" + id, { enfermero: newEnfermero }).then(() => {
+        this.mockCamas = this.mockCamas.map((c) => (c.id === id ? { ...c, enfermero: newEnfermero } : c))
+        const raw = localStorage.getItem("camas")
+        const arr = raw ? JSON.parse(raw) : []
+        localStorage.setItem(
+          "camas",
+          JSON.stringify(arr.map((c) => (c.id === id ? { ...c, enfermero: newEnfermero } : c))),
+        )
+
+        // Actualizar listas de camas en enfermeros (quitar del anterior, agregar al nuevo)
+        if (prevEnfermero && prevEnfermero !== newEnfermero) {
+          this.mockEnfermeros = this.mockEnfermeros.map((e) =>
+            e.id === prevEnfermero ? { ...e, camas: (e.camas || []).filter((x) => x !== id) } : e,
+          )
+          const rawE = localStorage.getItem("enfermeros")
+          const arrE = rawE ? JSON.parse(rawE) : []
+          localStorage.setItem(
+            "enfermeros",
+            JSON.stringify(
+              arrE.map((e) => (e.id === prevEnfermero ? { ...e, camas: (e.camas || []).filter((x) => x !== id) } : e)),
+            ),
+          )
+          API.put("/enfermeros/" + prevEnfermero, { camas: (this.mockEnfermeros.find((e) => e.id === prevEnfermero)?.camas) || [] }).catch(() => {})
+        }
+        if (newEnfermero) {
+          const target = this.mockEnfermeros.find((e) => e.id === newEnfermero)
+          const updated = target ? Array.from(new Set([...(target.camas || []), id])) : [id]
+          this.mockEnfermeros = this.mockEnfermeros.map((e) => (e.id === newEnfermero ? { ...e, camas: updated } : e))
+          const rawE2 = localStorage.getItem("enfermeros")
+          const arrE2 = rawE2 ? JSON.parse(rawE2) : []
+          localStorage.setItem(
+            "enfermeros",
+            JSON.stringify(arrE2.map((e) => (e.id === newEnfermero ? { ...e, camas: updated } : e))),
+          )
+          API.put("/enfermeros/" + newEnfermero, { camas: updated }).catch(() => {})
+        }
+
+        this.renderAllTabs()
+      })
+    } else if (this.currentModal === "enfermero_edit") {
+      const id = this.editEntityId
+      const nombre = document.getElementById("enfermero-nombre").value
+      const email = document.getElementById("enfermero-email").value
+      API.put("/enfermeros/" + id, { nombre, email }).then(() => {
+        this.mockEnfermeros = this.mockEnfermeros.map((e) => (e.id === id ? { ...e, nombre, email } : e))
+        const raw = localStorage.getItem("enfermeros")
+        const arr = raw ? JSON.parse(raw) : []
+        localStorage.setItem(
+          "enfermeros",
+          JSON.stringify(arr.map((e) => (e.id === id ? { ...e, nombre, email } : e))),
+        )
+        this.renderAllTabs()
+      })
+    } else if (this.currentModal === "paciente_edit") {
+      const id = this.editEntityId
+      const nombre = document.getElementById("paciente-nombre").value
+      const cama = document.getElementById("paciente-cama").value
+      const tratamiento = document.getElementById("paciente-tratamiento").value
+      const prev = this.mockPacientes.find((p) => p.id === id)
+      const camaPrev = prev ? prev.cama : ""
+      API.put("/pacientes/" + id, { nombre, cama, tratamiento }).then(() => {
+        this.mockPacientes = this.mockPacientes.map((p) => (p.id === id ? { ...p, nombre, cama, tratamiento } : p))
+        const raw = localStorage.getItem("pacientes")
+        const arr = raw ? JSON.parse(raw) : []
+        localStorage.setItem(
+          "pacientes",
+          JSON.stringify(arr.map((p) => (p.id === id ? { ...p, nombre, cama, tratamiento } : p))),
+        )
+        if (camaPrev && camaPrev !== cama) {
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaPrev ? { ...c, estado: "libre", paciente: "" } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem("camas", JSON.stringify(arrC.map((c) => (c.id === camaPrev ? { ...c, estado: "libre", paciente: "" } : c))))
+          API.put("/camas/" + camaPrev, { estado: "libre", paciente: "" }).catch(() => {})
+        }
+        if (cama) {
+          this.mockCamas = this.mockCamas.map((c) => (c.id === cama ? { ...c, estado: "ocupada", paciente: nombre } : c))
+          const rawC2 = localStorage.getItem("camas")
+          const arrC2 = rawC2 ? JSON.parse(rawC2) : []
+          localStorage.setItem("camas", JSON.stringify(arrC2.map((c) => (c.id === cama ? { ...c, estado: "ocupada", paciente: nombre } : c))))
+          API.put("/camas/" + cama, { estado: "ocupada", paciente: nombre }).catch(() => {})
+        }
+        this.renderAllTabs()
+      })
+    }
+
+    this.closeModal()
+  }
+
+  // ============================================
+  // RENDER
+  // ============================================
+
+  renderAllTabs() {
+    this.renderCamas()
+    this.renderEnfermeros()
+    this.renderPacientes()
+  }
+
+  renderCamas() {
+    const container = document.getElementById("lista-camas")
+    if (!container) return
+
+    container.innerHTML = this.mockCamas
+      .map(
+        (cama) => `
+      <div class="card-item">
+        <h3>Cama ${cama.id}</h3>
+        <p><strong>Estado:</strong> ${cama.estado}</p>
+        <p><strong>Enfermero:</strong> ${cama.enfermero || "—"}</p>
+        <div class="card-item-actions">
+          <button class="btn btn-secondary btn-small" onclick="admin.editCama('${cama.id}')">Editar</button>
+          <button class="btn btn-secondary btn-small" onclick="admin.deleteCama('${cama.id}')">Eliminar</button>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+  }
+
+  renderEnfermeros() {
+    const container = document.getElementById("lista-enfermeros")
+    if (!container) return
+
+    container.innerHTML = this.mockEnfermeros
+      .map(
+        (enf) => `
+      <div class="card-item">
+        <h3>${enf.nombre}</h3>
+        <p><strong>ID:</strong> ${enf.id}</p>
+        <p><strong>Camas:</strong> ${enf.camas?.join(", ") || "Sin asignar"}</p>
+        <div class="card-item-actions">
+          <button class="btn btn-secondary btn-small" onclick="admin.editEnfermero('${enf.id}')">Editar</button>
+          <button class="btn btn-secondary btn-small" onclick="admin.deleteEnfermero('${enf.id}')">Eliminar</button>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+  }
+
+  renderPacientes() {
+    const container = document.getElementById("lista-pacientes")
+    if (!container) return
+
+    container.innerHTML = this.mockPacientes
+      .map(
+        (pac) => `
+      <div class="card-item">
+        <h3>${pac.nombre}</h3>
+        <p><strong>Cama:</strong> ${pac.cama}</p>
+        <p><strong>Tratamiento:</strong> ${pac.tratamiento || "—"}</p>
+        <div class="card-item-actions">
+          <button class="btn btn-secondary btn-small" onclick="admin.editPaciente('${pac.id}')">Editar</button>
+          <button class="btn btn-secondary btn-small" onclick="admin.deletePaciente('${pac.id}')">Eliminar</button>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+  }
+
+  // ============================================
+  // QR GENERATION
+  // ============================================
+
+  async updateQRIds() {
+    const type = document.getElementById("qr-type").value
+    const select = document.getElementById("qr-id")
+    const options =
+      type === "paciente"
+        ? this.mockPacientes.map((p) => `<option value="${p.id}">${p.nombre} (Cama ${p.cama})</option>`)
+        : this.mockEnfermeros.map((e) => `<option value="${e.id}">${e.nombre}</option>`)
+
+    select.innerHTML = `<option value="">Selecciona...</option>${options.join("")}`
+  }
+
+  generateQR() {
+    const type = document.getElementById("qr-type").value
+    const id = document.getElementById("qr-id").value
+
+    if (!id) {
+      showToast("Selecciona un usuario/cama", "warning")
+      return
+    }
+
+    let url = ""
+    if (type === "paciente") {
+      const paciente = this.mockPacientes.find((p) => p.id === id)
+      const token = "token_" + generateUUID()
+      url = `${window.location.origin}/paciente.html?cama_id=${paciente.cama}&token=${token}`
+    } else {
+      url = `${window.location.origin}/enfermero.html?user_id=${id}`
+    }
+
+    this.drawQRCode(url)
+    document.getElementById("qr-url-preview").textContent = `URL: ${url}`
+    document.getElementById("qr-result").classList.remove("hidden")
+  }
+
+  editCama(id) {
+    const c = this.mockCamas.find((x) => x.id === id)
+    if (!c) return
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Editar Cama"
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="cama-id">ID de Cama</label>
+        <input type="text" id="cama-id" value="${c.id}" disabled>
+      </div>
+      <div class="form-group">
+        <label for="cama-enfermero">Asignar Enfermero</label>
+        <select id="cama-enfermero">
+          <option value="">Selecciona enfermero...</option>
+          ${this.mockEnfermeros.map((e) => `<option value="${e.id}" ${c.enfermero === e.id ? "selected" : ""}>${e.nombre}</option>`).join("")}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar</button>
+    `
+    modal.classList.remove("hidden")
+    this.currentModal = "cama_edit"
+    this.editEntityId = id
+  }
+
+  deleteCama(id) {
+    API.delete("/camas/" + id).finally(() => {
+      this.mockCamas = this.mockCamas.filter((c) => c.id !== id)
+      const raw = localStorage.getItem("camas")
+      const arr = raw ? JSON.parse(raw) : []
+      localStorage.setItem("camas", JSON.stringify(arr.filter((c) => c.id !== id)))
+      this.renderAllTabs()
+    })
+  }
+
+  editEnfermero(id) {
+    const e = this.mockEnfermeros.find((x) => x.id === id)
+    if (!e) return
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Editar Enfermero"
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="enfermero-nombre">Nombre</label>
+        <input type="text" id="enfermero-nombre" value="${e.nombre}" required>
+      </div>
+      <div class="form-group">
+        <label for="enfermero-email">Email</label>
+        <input type="email" id="enfermero-email" value="${e.email || ""}" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar</button>
+    `
+    modal.classList.remove("hidden")
+    this.currentModal = "enfermero_edit"
+    this.editEntityId = id
+  }
+
+  deleteEnfermero(id) {
+    API.delete("/enfermeros/" + id).finally(() => {
+      this.mockEnfermeros = this.mockEnfermeros.filter((e) => e.id !== id)
+      const raw = localStorage.getItem("enfermeros")
+      const arr = raw ? JSON.parse(raw) : []
+      localStorage.setItem("enfermeros", JSON.stringify(arr.filter((e) => e.id !== id)))
+      this.renderAllTabs()
+    })
+  }
+
+  editPaciente(id) {
+    const p = this.mockPacientes.find((x) => x.id === id)
+    if (!p) return
+    const modal = document.getElementById("modal")
+    document.getElementById("modal-title").textContent = "Editar Paciente"
+    const form = document.getElementById("form-modal")
+    form.innerHTML = `
+      <div class="form-group">
+        <label for="paciente-nombre">Nombre</label>
+        <input type="text" id="paciente-nombre" value="${p.nombre}" required>
+      </div>
+      <div class="form-group">
+        <label for="paciente-cama">Asignar Cama</label>
+        <select id="paciente-cama">
+          <option value="">Selecciona cama...</option>
+          ${this.mockCamas.map((c) => `<option value="${c.id}" ${p.cama === c.id ? "selected" : ""}>${c.id}</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="paciente-tratamiento">Tratamiento</label>
+        <textarea id="paciente-tratamiento" rows="3">${p.tratamiento || ""}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Guardar</button>
+    `
+    modal.classList.remove("hidden")
+    this.currentModal = "paciente_edit"
+    this.editEntityId = id
+  }
+
+  deletePaciente(id) {
+    API.delete("/pacientes/" + id).finally(() => {
+      this.mockPacientes = this.mockPacientes.filter((p) => p.id !== id)
+      const raw = localStorage.getItem("pacientes")
+      const arr = raw ? JSON.parse(raw) : []
+      localStorage.setItem("pacientes", JSON.stringify(arr.filter((p) => p.id !== id)))
+      this.renderAllTabs()
+    })
+  }
+
+  /**
+   * Generador simple de QR usando Canvas
+   * (Implementación básica sin librerías externas)
+   */
+  drawQRCode(text) {
+    const container = document.getElementById("qr-container")
+    const size = 256
+    if (container) {
+      container.innerHTML = ""
+      if (window.QRCode && typeof window.QRCode === "function") {
+        new window.QRCode(container, {
+          text,
+          width: size,
+          height: size,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: window.QRCode.CorrectLevel && window.QRCode.CorrectLevel.H,
+        })
+        return
+      }
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      canvas.width = size
+      canvas.height = size
+      ctx.fillStyle = "#ffffff"
+      ctx.fillRect(0, 0, size, size)
+      ctx.fillStyle = "#000000"
+      ctx.font = "14px sans-serif"
+      ctx.fillText("QR no disponible", 60, 130)
+      container.appendChild(canvas)
+    }
+  }
+
+  simpleHash(str) {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i)
+      hash = (hash << 5) - hash + char
+      hash = hash & hash // Convertir a 32-bit integer
+    }
+    return Math.abs(hash)
+  }
+}
+
+// Inicializar
+let admin
+document.addEventListener("DOMContentLoaded", () => {
+  admin = new AdminIsla()
+
+  // Download QR
+  document.getElementById("btn-download-qr")?.addEventListener("click", () => {
+    const container = document.getElementById("qr-container")
+    const canvas = container?.querySelector("canvas")
+    const img = container?.querySelector("img")
+    if (canvas) {
+      const link = document.createElement("a")
+      link.href = canvas.toDataURL("image/png")
+      link.download = "qr-code.png"
+      link.click()
+    } else if (img) {
+      const off = document.createElement("canvas")
+      const size = Math.max(img.naturalWidth || 256, img.width || 256)
+      off.width = size
+      off.height = size
+      const ctx = off.getContext("2d")
+      ctx.drawImage(img, 0, 0, size, size)
+      const link = document.createElement("a")
+      link.href = off.toDataURL("image/png")
+      link.download = "qr-code.png"
+      link.click()
+    }
+  })
+})
+</file>
+
+<file path="js/roles/enfermero.js">
+/**
+ * Lógica específica para Enfermero
+ * - Dashboard de camas
+ * - Alertas en tiempo real
+ * - Gestión de notificaciones
+ */
+
+ 
+
+ 
+
+// Usar Session, API, NotificationManager y RealtimeConnection globales
+
+class Enfermero {
+  constructor() {
+    this.userId = getQueryParam("user_id")
+    this.mockCamas = []
+    this.mockAlertas = []
+    this.pollingInterval = null
+    this.notificationsEnabled = true
+    this.assignedBeds = []
+    this.init()
+  }
+
+  init() {
+    this.checkAuth()
+    if (!Session.isLoggedIn()) {
+      this.showScannerUI()
+      return
+    }
+    this.registerFcmToken()
+    this.setupNotifications()
+    this.loadData()
+    this.setupEventListeners()
+    this.startRealtimeMonitoring()
+  }
+
+  checkAuth() {
+    const dash = document.querySelector(".enfermero-dashboard")
+    const loginBox = document.getElementById("enfermero-login")
+    if (this.userId) {
+      const user = { role: "enfermero", id: this.userId, nombre: "Enfermero" }
+      Session.setUser(user)
+      Session.setToken("demo-token-" + generateUUID())
+      dash.classList.remove("hidden")
+      loginBox.classList.add("hidden")
+      return
+    }
+    if (!Session.isLoggedIn()) {
+      dash.classList.add("hidden")
+      loginBox.classList.remove("hidden")
+    }
+  }
+
+  showScannerUI() {
+    const openBtn = document.getElementById("btn-scan-qr")
+    const modal = document.getElementById("scanner-modal")
+    const closeBtn = document.getElementById("btn-close-scanner")
+    openBtn?.addEventListener("click", () => {
+      modal.classList.remove("hidden")
+      this.startQrScanner()
+    })
+    closeBtn?.addEventListener("click", () => {
+      modal.classList.add("hidden")
+      this.stopQrScanner()
+    })
+  }
+
+  startQrScanner() {
+    const video = document.getElementById("qr-video")
+    const canvas = document.getElementById("qr-canvas")
+    const ctx = canvas.getContext("2d")
+    const constraints = { video: { facingMode: "environment" } }
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        this.qrStream = stream
+        video.srcObject = stream
+        this.qrInterval = setInterval(() => {
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            try {
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+              const code = window.jsQR ? window.jsQR(imageData.data, canvas.width, canvas.height) : null
+              if (code && code.data) {
+                this.onQrDetected(code.data)
+              }
+            } catch {}
+          }
+        }, 250)
+      })
+      .catch(() => {
+        showToast("No se pudo acceder a la cámara", "error")
+      })
+  }
+
+  stopQrScanner() {
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (this.qrStream) {
+      this.qrStream.getTracks().forEach((t) => t.stop())
+      this.qrStream = null
+    }
+  }
+
+  onQrDetected(text) {
+    // Buscar user_id en el texto (URL o contenido)
+    let uid = null
+    try {
+      const m = text.match(/user_id=([^&]+)/)
+      uid = m && m[1]
+      if (!uid && /^E\w+/.test(text)) uid = text
+    } catch {}
+    if (!uid) return
+
+    this.stopQrScanner()
+    document.getElementById("scanner-modal").classList.add("hidden")
+
+    this.userId = uid
+    const user = { role: "enfermero", id: uid, nombre: "Enfermero" }
+    Session.setUser(user)
+    Session.setToken("demo-token-" + generateUUID())
+
+    document.getElementById("enfermero-login")?.classList.add("hidden")
+    document.querySelector(".enfermero-dashboard")?.classList.remove("hidden")
+
+    this.registerFcmToken()
+    this.setupNotifications()
+    this.loadData()
+    this.setupEventListeners()
+    this.startRealtimeMonitoring()
+  }
+
+  setupNotifications() {
+    this.notificationsEnabled = localStorage.getItem("notifications_enabled") !== "false"
+    const btn = document.getElementById("btn-toggle-notifications")
+    if (btn) {
+      btn.textContent = this.notificationsEnabled ? "🔔" : "🔕"
+      btn.addEventListener("click", () => this.toggleNotifications())
+    }
+  }
+
+  toggleNotifications() {
+    this.notificationsEnabled = !this.notificationsEnabled
+    localStorage.setItem("notifications_enabled", this.notificationsEnabled ? "true" : "false")
+
+    const btn = document.getElementById("btn-toggle-notifications")
+    btn.textContent = this.notificationsEnabled ? "🔔" : "🔕"
+
+    showToast(this.notificationsEnabled ? "Notificaciones activadas" : "Notificaciones desactivadas", "info")
+  }
+
+  async loadData() {
+    let nurse = null
+    if (window.db && window.firestore) {
+      const { doc, getDoc } = window.firestore
+      try {
+        const u = Session.getUser && Session.getUser()
+        const id = (u && u.id) || this.userId
+        if (id) {
+          const d = await getDoc(doc(window.db, "enfermeros", id))
+          if (d.exists()) nurse = { id: d.id, ...d.data() }
+        }
+      } catch {}
+    }
+
+    if (!nurse) {
+      const u = Session.getUser && Session.getUser()
+      const id = (u && u.id) || this.userId
+      if (id) {
+        const enfRes = await API.get("/enfermeros")
+        if (enfRes.success) nurse = (enfRes.data || []).find((e) => e.id === id)
+      }
+    }
+
+    this.assignedBeds = nurse && Array.isArray(nurse.camas) ? nurse.camas : []
+    const islaId = nurse && nurse.isla_id
+    this.islaId = islaId
+
+    const camasRes = await API.get("/camas", islaId ? { isla_id: islaId } : {})
+    if (camasRes.success) this.mockCamas = camasRes.data || []
+
+    if (!this.assignedBeds || this.assignedBeds.length === 0) {
+      const infer = this.mockCamas.filter((c) => c.enfermero === (nurse && nurse.id)).map((c) => c.id)
+      this.assignedBeds = infer
+    }
+
+    const myCamas = this.mockCamas.filter((c) => this.assignedBeds.includes(c.id))
+    document.getElementById("cama-count").textContent = myCamas.length
+
+    const header = document.querySelector(".header-title")
+    if (header && nurse && nurse.nombre) header.textContent = `Dashboard Enfermero — ${nurse.nombre}`
+
+    this.renderCamas()
+  }
+
+  registerFcmToken() {
+    const user = Session.getUser && Session.getUser()
+    const token = localStorage.getItem("fcm_token")
+    if (user && user.id && token) {
+      const raw = localStorage.getItem("nurse_fcm_tokens")
+      const map = raw ? JSON.parse(raw) : {}
+      map[user.id] = token
+      localStorage.setItem("nurse_fcm_tokens", JSON.stringify(map))
+    }
+  }
+
+  setupEventListeners() {
+    // Modal de alertas
+    document.getElementById("btn-close-alert")?.addEventListener("click", () => {
+      document.getElementById("alert-modal").classList.add("hidden")
+    })
+
+    document.getElementById("btn-confirm-alert")?.addEventListener("click", () => {
+      this.handleAlert(true)
+    })
+
+    document.getElementById("btn-dismiss-alert")?.addEventListener("click", () => {
+      this.handleAlert(false)
+    })
+  }
+
+  // ============================================
+  // REALTIME MONITORING
+  // ============================================
+
+  startRealtimeMonitoring() {
+    if (window.db && window.firestore) {
+      const { collection, onSnapshot, query, where } = window.firestore
+      const base = collection(window.db, "alertas")
+      let q
+      const u = Session.getUser && Session.getUser()
+      if (u && u.id) {
+        q = query(base, where("nurse_id", "==", u.id), where("confirmado", "==", false))
+      } else if (this.assignedBeds && this.assignedBeds.length > 0 && this.assignedBeds.length <= 10) {
+        q = query(base, where("cama_id", "in", this.assignedBeds), where("confirmado", "==", false))
+      } else if (this.islaId) {
+        q = query(base, where("isla_id", "==", this.islaId), where("confirmado", "==", false))
+      } else {
+        q = query(base, where("confirmado", "==", false))
+      }
+      this.unsubscribeAlerts = onSnapshot(q, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          const a = { id: change.doc.id, ...change.doc.data() }
+          if (!a.confirmado && (!this.assignedBeds.length || this.assignedBeds.includes(a.cama_id))) {
+            if (change.type === "added") {
+              this.handleNewAlert(a)
+            } else if (change.type === "modified") {
+              const idx = this.mockAlertas.findIndex((x) => x.id === a.id)
+              if (idx >= 0) this.mockAlertas[idx] = { ...this.mockAlertas[idx], ...a }
+              this.renderAlertas()
+            }
+          }
+        })
+      })
+      return
+    }
+
+    // Fallback: polling periódico cuando no hay Firestore
+    const intervalId = RealtimeConnection.startPolling("/alertas", 4000)
+    this.pollingInterval = intervalId
+    RealtimeConnection.on("message", (msg) => {
+      if (msg && msg.type === "alert" && Array.isArray(msg.data)) {
+        msg.data.forEach((a) => {
+          if (!a.confirmado && (!this.assignedBeds.length || this.assignedBeds.includes(a.cama_id))) {
+            if (!this.mockAlertas.find((x) => x.id === a.id)) {
+              this.handleNewAlert(a)
+            }
+          }
+        })
+      }
+    })
+  }
+
+  simulateDemoAlert() {
+    setTimeout(() => {
+      if (Math.random() > 0.5) {
+        const cama = this.mockCamas[Math.floor(Math.random() * this.mockCamas.length)]
+        this.handleNewAlert({
+          id: generateUUID(),
+          cama_id: cama.id,
+          paciente: cama.paciente,
+          tipo: "ayuda",
+          timestamp: new Date(),
+        })
+      }
+      this.simulateDemoAlert()
+    }, 15000)
+  }
+
+  handleNewAlert(alert) {
+    this.mockAlertas.push(alert)
+
+    // Actualizar contador
+    const count = this.mockAlertas.filter((a) => !a.confirmado).length
+    document.getElementById("alert-count").textContent = count
+
+    // Mostrar notificación si está habilitada
+    if (this.notificationsEnabled) {
+      const body = `Cama ${alert.cama_id}${alert.paciente ? ` - ${alert.paciente}` : ''}`
+      NotificationManager.show("Nueva Alerta", {
+        body,
+        tag: "alert-" + alert.id,
+        requireInteraction: true,
+      })
+    }
+
+    // Mostrar modal si es la primera alerta sin confirmar
+    this.showAlertModal(alert)
+    this.renderAlertas()
+  }
+
+  showAlertModal(alert) {
+    const modal = document.getElementById("alert-modal")
+    const content = document.getElementById("alert-content")
+
+    content.innerHTML = `
+      <div class="alert-item">
+        <h3>Cama ${alert.cama_id}</h3>
+        <p><strong>Paciente:</strong> ${alert.paciente || "—"}</p>
+        <p><strong>Tipo:</strong> ${alert.tipo === "ayuda" ? "Solicitud de Ayuda" : alert.tipo}</p>
+        <p><strong>Hora:</strong> ${formatDate(alert.timestamp)}</p>
+      </div>
+    `
+
+    modal.dataset.alertId = alert.id
+    modal.classList.remove("hidden")
+  }
+
+  handleAlert(confirmed) {
+    const modal = document.getElementById("alert-modal")
+    const alertId = modal.dataset.alertId
+
+    const alert = this.mockAlertas.find((a) => a.id === alertId)
+    if (alert) {
+      alert.confirmado = confirmed
+
+      // Enviar a API
+      API.post("/alertas/" + alertId + "/confirm", { confirmado: confirmed })
+
+      const raw = localStorage.getItem("alertas")
+      const arr = raw ? JSON.parse(raw) : []
+      const updated = arr.map((a) => (a.id === alertId ? { ...a, confirmado: confirmed } : a))
+      localStorage.setItem("alertas", JSON.stringify(updated))
+
+      showToast(confirmed ? "Alerta confirmada" : "Alerta descartada", confirmed ? "success" : "info")
+    }
+
+    modal.classList.add("hidden")
+    this.renderAlertas()
+  }
+
+  // ============================================
+  // RENDER
+  // ============================================
+
+  renderCamas() {
+    const container = document.getElementById("lista-camas-enfermero")
+    if (!container) return
+
+    const list = this.mockCamas.filter((c) => this.assignedBeds.includes(c.id))
+    container.innerHTML = list
+      .map((cama) => {
+        const estadoClass = cama.estado === "ocupada" ? "alert" : "empty-state"
+        return `
+        <div class="card-item">
+          <h3>Cama ${cama.id}</h3>
+          <p><strong>Estado:</strong> <span class="${estadoClass}">${cama.estado}</span></p>
+          ${cama.paciente ? `<p><strong>Paciente:</strong> ${cama.paciente}</p>` : ""}
+          <button class="btn btn-secondary btn-small" onclick="enfermero.viewCamaDetails('${cama.id}')">
+            Ver detalles
+          </button>
+        </div>
+      `
+      })
+      .join("")
+  }
+
+  renderAlertas() {
+    const container = document.getElementById("alertas-container")
+    if (!container) return
+
+    const alertasPendientes = this.mockAlertas.filter((a) => !a.confirmado)
+
+    if (alertasPendientes.length === 0) {
+      container.innerHTML = '<p class="empty-state">Sin alertas en este momento</p>'
+      return
+    }
+
+    container.innerHTML = alertasPendientes
+      .map(
+        (alerta) => `
+      <div class="alert-item">
+        <h3>Cama ${alerta.cama_id}</h3>
+        <p><strong>Paciente:</strong> ${alerta.paciente || "—"}</p>
+        <p><strong>Tipo:</strong> ${alerta.tipo === "ayuda" ? "Solicitud de Ayuda" : alerta.tipo}</p>
+        <p><strong>Hora:</strong> ${formatDate(alerta.timestamp)}</p>
+        <div class="alert-item-actions">
+          <button class="btn btn-primary btn-small" onclick="enfermero.confirmAlert('${alerta.id}')">
+            Confirmar
+          </button>
+          <button class="btn btn-secondary btn-small" onclick="enfermero.dismissAlert('${alerta.id}')">
+            Descartar
+          </button>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+  }
+
+  viewCamaDetails(camaId) {
+    const cama = this.mockCamas.find((c) => c.id === camaId)
+    if (cama) {
+      showToast(`Cama ${camaId}: ${cama.paciente || "Libre"}`, "info")
+    }
+  }
+
+  confirmAlert(alertId) {
+    const alert = this.mockAlertas.find((a) => a.id === alertId)
+    if (alert) {
+      alert.confirmado = true
+      API.post("/alertas/" + alertId + "/confirm", { confirmado: true })
+      showToast("Alerta confirmada", "success")
+      this.renderAlertas()
+    }
+  }
+
+  dismissAlert(alertId) {
+    const alert = this.mockAlertas.find((a) => a.id === alertId)
+    if (alert) {
+      alert.confirmado = true
+      API.post("/alertas/" + alertId + "/dismiss", {})
+      this.renderAlertas()
+    }
+  }
+}
+
+// Inicializar
+let enfermero
+document.addEventListener("DOMContentLoaded", () => {
+  enfermero = new Enfermero()
+})
+</file>
+
+<file path="js/roles/paciente.js">
+/**
+ * Lógica específica para Paciente
+ * - Validación de token
+ * - Información del paciente
+ * - Botón "Solicitar Ayuda"
+ */
+
+ 
+
+// Usar API global (js/utils/api.js)
+
+ 
+
+class Paciente {
+  constructor() {
+    this.camaId = getQueryParam("cama_id")
+    this.token = getQueryParam("token")
+    this.pacienteData = null
+    this.helpTimeout = null
+    this.init()
+  }
+
+  async init() {
+    if (!this.camaId || !this.token) {
+      this.showScannerUI()
+      return
+    }
+    await this.validateToken()
+    this.setupEventListeners()
+  }
+
+  async validateToken() {
+    // Validar token
+    const result = await API.get("/validate-token", {
+      cama_id: this.camaId,
+      token: this.token,
+    })
+
+    const errorDiv = document.getElementById("validation-error")
+    const contentDiv = document.getElementById("paciente-content")
+
+    if (result.success && result.data.valid) {
+      this.pacienteData = result.data.paciente
+      this.renderPacienteInfo()
+      contentDiv.classList.remove("hidden")
+      document.getElementById("paciente-login")?.classList.add("hidden")
+      Session.setUser && Session.setUser({ role: "paciente", id: this.pacienteData.id, nombre: this.pacienteData.nombre })
+      Session.setToken && Session.setToken("token-" + Date.now())
+
+      // Asegurar que la cama quede marcada como ocupada cuando tiene paciente
+      try {
+        const camaId = this.pacienteData.cama
+        if (camaId) {
+          await API.put("/camas/" + camaId, { estado: "ocupada", paciente: this.pacienteData.nombre })
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem(
+            "camas",
+            JSON.stringify(arrC.map((c) => (c.id === camaId ? { ...c, estado: "ocupada", paciente: this.pacienteData.nombre } : c))),
+          )
+        }
+      } catch {}
+    } else {
+      errorDiv.classList.remove("hidden")
+      contentDiv.classList.add("hidden")
+      this.showScannerUI()
+    }
+  }
+
+  renderPacienteInfo() {
+    document.getElementById("paciente-nombre").textContent = this.pacienteData.nombre
+    document.getElementById("paciente-cama").textContent = this.pacienteData.cama
+    document.getElementById("paciente-tratamiento").textContent = this.pacienteData.tratamiento
+    document.getElementById("paciente-notas").textContent = this.pacienteData.notas
+  }
+
+  setupEventListeners() {
+    const btn = document.getElementById("btn-solicitar-ayuda")
+    if (btn) {
+      btn.addEventListener("click", () => this.solicitarAyuda())
+    }
+  }
+
+  showScannerUI() {
+    const box = document.getElementById("paciente-login")
+    const btn = document.getElementById("btn-scan-qr")
+    const modal = document.getElementById("scanner-modal")
+    const closeBtn = document.getElementById("btn-close-scanner")
+    if (box) box.classList.remove("hidden")
+    btn && btn.addEventListener("click", () => {
+      modal && modal.classList.remove("hidden")
+      this.startQrScanner()
+    })
+    closeBtn && closeBtn.addEventListener("click", () => {
+      modal && modal.classList.add("hidden")
+      this.stopQrScanner()
+    })
+  }
+
+  startQrScanner() {
+    const video = document.getElementById("qr-video")
+    const canvas = document.getElementById("qr-canvas")
+    const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null
+    const constraints = { video: { facingMode: "environment" } }
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        this.qrStream = stream
+        video.srcObject = stream
+        this.qrInterval = setInterval(() => {
+          if (!ctx) return
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            try {
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+              const code = window.jsQR ? window.jsQR(imageData.data, canvas.width, canvas.height) : null
+              if (code && code.data) {
+                this.onQrDetected(code.data)
+              }
+            } catch {}
+          }
+        }, 250)
+      })
+      .catch(() => {
+        showToast("No se pudo acceder a la cámara", "error")
+      })
+  }
+
+  stopQrScanner() {
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (this.qrStream) {
+      this.qrStream.getTracks().forEach((t) => t.stop())
+      this.qrStream = null
+    }
+  }
+
+  onQrDetected(text) {
+    let cama = null
+    let token = null
+    try {
+      const mC = text.match(/cama_id=([^&]+)/)
+      const mT = text.match(/token=([^&]+)/)
+      cama = mC && mC[1]
+      token = mT && mT[1]
+    } catch {}
+    if (!cama || !token) return
+    this.stopQrScanner()
+    const modal = document.getElementById("scanner-modal")
+    modal && modal.classList.add("hidden")
+    this.camaId = cama
+    this.token = token
+    this.validateToken()
+  }
+
+  async solicitarAyuda() {
+    const btn = document.getElementById("btn-solicitar-ayuda")
+    const feedback = document.getElementById("help-feedback")
+
+    if (!btn || btn.disabled) return
+    // Deshabilitar botón por 5 segundos (antirebote)
+    btn.disabled = true
+    btn.textContent = "Enviando solicitud..."
+
+    try {
+      const result = await API.post("/alertas", {
+        cama_id: String(this.camaId),
+        paciente_id: this.pacienteData.id,
+        paciente: this.pacienteData.nombre,
+        isla_id: this.pacienteData.isla_id,
+        tipo: "ayuda",
+        timestamp: new Date().toISOString(),
+      })
+
+      const alert = {
+        id: result && result.success && result.data && result.data.id ? result.data.id : Date.now().toString(),
+        cama_id: this.camaId,
+        paciente: this.pacienteData.nombre,
+        tipo: "ayuda",
+        timestamp: new Date().toISOString(),
+      }
+
+      try {
+        if (window.db && window.firestore) {
+          const { collection, query, where, getDocs, doc, getDoc } = window.firestore
+          const q = query(collection(window.db, "enfermeros"), where("camas", "array-contains", this.camaId))
+          const snap = await getDocs(q)
+          const docItem = snap.docs[0]
+          if (docItem) alert.nurse_id = docItem.id
+          if (!alert.nurse_id && this.camaId) {
+            const cdoc = await getDoc(doc(window.db, "camas", this.camaId))
+            const cdata = cdoc.exists() ? cdoc.data() : null
+            if (cdata && cdata.enfermero) alert.nurse_id = cdata.enfermero
+          }
+        }
+      } catch {}
+
+      // Persistencia en Firestore manejada arriba; sin almacenamiento provisional local
+
+      if (alert.nurse_id && alert.id) {
+        // Persistir nurse_id en la alerta para facilitar filtrado del lado del enfermero
+        try { await API.put("/alertas/" + alert.id, { nurse_id: alert.nurse_id }) } catch {}
+        // Envío opcional al canal de notificaciones (demo/local)
+        const notifyPayload = {
+          nurse_id: alert.nurse_id,
+          notification: {
+            title: "Nueva solicitud de ayuda",
+            body: `Cama ${alert.cama_id} - ${this.pacienteData.nombre}`,
+          },
+          data: {
+            alert_id: alert.id,
+            cama_id: alert.cama_id,
+            paciente: this.pacienteData.nombre,
+            paciente_id: this.pacienteData.id,
+            isla_id: this.pacienteData.isla_id,
+          },
+        }
+        try { await API.post("/notify", notifyPayload) } catch {}
+      }
+
+      if (result.success) {
+        // Mostrar confirmación
+        feedback.textContent = "✓ Solicitud enviada. El personal se acercará pronto."
+        feedback.classList.remove("hidden")
+        showToast("Solicitud de ayuda enviada", "success")
+
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification("Solicitud Enviada", {
+              body: "Tu solicitud de ayuda ha sido registrada",
+              tag: "help-request",
+            })
+          })
+        }
+      } else {
+        showToast("Error al enviar solicitud", "error")
+      }
+    } catch (error) {
+      showToast("Error de conexión", "error")
+      console.error("[v0] Error:", error)
+    }
+
+    // Reactivar botón después de 5 segundos
+    this.helpTimeout = setTimeout(() => {
+      btn.disabled = false
+      btn.textContent = "Solicitar Ayuda"
+      feedback.classList.add("hidden")
+    }, 5000)
+  }
+}
+
+// Inicializar
+document.addEventListener("DOMContentLoaded", () => {
+  new Paciente()
+})
+</file>
+
+<file path="admin_isla.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Admin - Usuario Isla</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <header class="header">
+      <h1 class="header-title">Usuario Isla</h1>
+      <button class="btn btn-small" id="btn-logout">Cerrar sesión</button>
+    </header>
+
+    <main class="main-content">
+      <div class="login-container hidden" id="isla-login">
+        <div class="login-card">
+          <h2>Acceso Usuario Isla</h2>
+          <form id="isla-login-form">
+            <div class="form-group">
+              <label for="isla-username">Usuario</label>
+              <input type="text" id="isla-username" required>
+            </div>
+            <div class="form-group">
+              <label for="isla-password">Contraseña</label>
+              <input type="password" id="isla-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+          </form>
+        </div>
+      </div>
+      <div class="admin-dashboard">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="camas">Camas</button>
+          <button class="tab-btn" data-tab="enfermeros">Enfermeros</button>
+          <button class="tab-btn" data-tab="pacientes">Pacientes</button>
+          <button class="tab-btn" data-tab="qr">Generar QR</button>
+        </div>
+
+        <!-- Tab: Camas -->
+        <section class="tab-content active" id="tab-camas">
+          <div class="section-header">
+            <h2>Gestión de Camas</h2>
+            <button class="btn btn-secondary" id="btn-add-cama">+ Nueva Cama</button>
+          </div>
+          <div id="lista-camas" class="card-grid">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </section>
+
+        <!-- Tab: Enfermeros -->
+        <section class="tab-content" id="tab-enfermeros">
+          <div class="section-header">
+            <h2>Gestión de Enfermeros</h2>
+            <button class="btn btn-secondary" id="btn-add-enfermero">+ Nuevo Enfermero</button>
+          </div>
+          <div id="lista-enfermeros" class="card-grid">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </section>
+
+        <!-- Tab: Pacientes -->
+        <section class="tab-content" id="tab-pacientes">
+          <div class="section-header">
+            <h2>Gestión de Pacientes</h2>
+            <button class="btn btn-secondary" id="btn-add-paciente">+ Nuevo Paciente</button>
+          </div>
+          <div id="lista-pacientes" class="card-grid">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </section>
+
+        <!-- Tab: QR Generator -->
+        <section class="tab-content" id="tab-qr">
+          <div class="section-header">
+            <h2>Generar Códigos QR</h2>
+          </div>
+          <div class="qr-generator">
+            <div class="form-group">
+              <label for="qr-type">Tipo de QR</label>
+              <select id="qr-type">
+                <option value="paciente">Paciente</option>
+                <option value="enfermero">Enfermero</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="qr-id">Selecciona usuario/cama</label>
+              <select id="qr-id">
+                <option value="">Cargando...</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-generate-qr">Generar QR</button>
+            <div id="qr-result" class="hidden">
+              <div id="qr-container"></div>
+              <button class="btn btn-secondary" id="btn-download-qr">Descargar QR</button>
+              <p id="qr-url-preview" class="small-text"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Genérico -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-modal">&times;</button>
+      <h2 id="modal-title"></h2>
+      <form id="form-modal">
+        <!-- Se llenará dinámicamente según el tipo -->
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast para notificaciones -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.5.0/dist/easy.qrcode.min.js"></script>
+  <script src="js/roles/adminIsla.js"></script>
+  <script src="env.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: window.__ENV.VAPID_KEY,
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>
+</file>
+
+<file path="enfermero.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Enfermero - Dashboard</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <header class="header">
+      <h1 class="header-title">Dashboard Enfermero</h1>
+      <div class="header-controls">
+        <button class="btn btn-small" id="btn-toggle-notifications">🔔</button>
+        <button class="btn btn-small" id="btn-logout">Salir</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Login por QR -->
+      <div class="login-container hidden" id="enfermero-login">
+        <div class="login-card">
+          <h2>Acceso Enfermero</h2>
+          <p class="small-text">Escanea tu QR para iniciar sesión</p>
+          <button class="btn btn-primary btn-full" id="btn-scan-qr">Escanear QR</button>
+        </div>
+      </div>
+
+      <div class="enfermero-dashboard">
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <p>Camas asignadas: <strong id="cama-count">0</strong></p>
+          <p>Alertas activas: <strong id="alert-count">0</strong></p>
+        </div>
+
+        <!-- Camas asignadas -->
+        <section class="section">
+          <h2>Mis Camas</h2>
+          <div id="lista-camas-enfermero" class="card-grid">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </section>
+
+        <!-- Alertas en tiempo real -->
+        <section class="section">
+          <h2>Alertas Activas</h2>
+          <div id="alertas-container" class="alerts-list">
+            <p class="empty-state">Sin alertas en este momento</p>
+          </div>
+        </section>
+
+        <!-- Historial -->
+        <section class="section">
+          <h2>Historial</h2>
+          <div id="historial-container" class="list">
+            <p class="empty-state">Sin registros</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast para notificaciones -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Alerta Modal -->
+  <div id="alert-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-alert">&times;</button>
+      <h2>Nueva Alerta</h2>
+      <div id="alert-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btn-confirm-alert">Confirmar</button>
+        <button class="btn btn-secondary" id="btn-dismiss-alert">Descartar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="scanner-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-scanner">&times;</button>
+      <h2>Escanear QR</h2>
+      <video id="qr-video" autoplay playsinline style="width:100%"></video>
+      <canvas id="qr-canvas" class="hidden"></canvas>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="js/roles/enfermero.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="env.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      getDoc,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: window.__ENV.VAPID_KEY,
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Hospital - Sistema de Gestión</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23f5f5f5' width='192' height='192'/><text x='50%' y='50%' font-size='96' fill='%23333' text-anchor='middle' dy='.3em'>H</text></svg'>">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <header class="header">
+      <h1 class="header-title">Sistema Hospitalario</h1>
+      <p class="header-subtitle">Gestión de Personal y Asistencia</p>
+    </header>
+
+    <main class="main-content">
+      <div class="login-container">
+        <div class="login-card">
+          <h2>Selecciona tu rol</h2>
+          
+          <button class="btn btn-primary" id="btn-admin">
+            <span class="btn-icon">⚙️</span>
+            Usuario Isla
+          </button>
+          
+      <button class="btn btn-primary" id="btn-enfermero">
+        <span class="btn-icon">👨‍⚕️</span>
+        Enfermero
+      </button>
+      
+      <button class="btn btn-primary" id="btn-superadmin">
+        <span class="btn-icon">🛡️</span>
+        Superadmin
+      </button>
+          
+          <button class="btn btn-secondary" id="btn-paciente">
+            <span class="btn-icon">🏥</span>
+            Paciente (QR)
+          </button>
+        </div>
+
+        <div class="login-form hidden" id="login-form">
+          <form id="form-login">
+            <div class="form-group">
+              <label for="username">Usuario</label>
+              <input 
+                type="text" 
+                id="username" 
+                placeholder="Ingresa tu usuario" 
+                required
+              >
+            </div>
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <input 
+                type="password" 
+                id="password" 
+                placeholder="Ingresa tu contraseña" 
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+            <button type="button" class="btn btn-secondary btn-full" id="btn-back">Volver</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="env.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => {
+        if (s) {
+          try { getAnalytics(app) } catch (e) {}
+        }
+      })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: window.__ENV.VAPID_KEY,
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+  <script>
+    // Manejadores de navegación de roles
+    document.getElementById('btn-admin').addEventListener('click', () => {
+      window.location.href = 'admin_isla.html';
+    });
+
+    document.getElementById('btn-enfermero').addEventListener('click', () => {
+      window.location.href = 'enfermero.html';
+    });
+
+    document.getElementById('btn-superadmin').addEventListener('click', () => {
+      window.location.href = 'superadmin.html';
+    });
+
+    document.getElementById('btn-paciente').addEventListener('click', () => {
+      window.location.href = 'paciente.html';
+    });
+
+    document.getElementById('btn-back').addEventListener('click', () => {
+      document.getElementById('login-form').classList.add('hidden');
+      document.querySelector('.login-card').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
+</file>
+
+<file path="paciente.html">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f5f5">
+  <title>Paciente - Sistema Hospitalario</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container paciente-view">
+    <main class="main-content">
+      <div class="login-container hidden" id="paciente-login">
+        <div class="login-card">
+          <h2>Acceso Paciente</h2>
+          <p class="small-text">Escanea tu QR para continuar</p>
+          <button class="btn btn-primary btn-full" id="btn-scan-qr">Escanear QR</button>
+        </div>
+      </div>
+      <div id="validation-error" class="alert alert-error hidden">
+        <p>Token inválido o expirado. Por favor, escanea un QR válido.</p>
+        <button class="btn btn-secondary" onclick="window.history.back()">Volver</button>
+      </div>
+
+      <div id="paciente-content" class="paciente-dashboard hidden">
+        <div class="paciente-card">
+          <h1 class="paciente-title">Información del Paciente</h1>
+          
+          <div class="info-section">
+            <label>Nombre:</label>
+            <p id="paciente-nombre" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Cama:</label>
+            <p id="paciente-cama" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Tratamiento:</label>
+            <p id="paciente-tratamiento" class="info-value">—</p>
+          </div>
+
+          <div class="info-section">
+            <label>Notas:</label>
+            <p id="paciente-notas" class="info-value">—</p>
+          </div>
+
+          <div class="paciente-action">
+            <button class="btn btn-help" id="btn-solicitar-ayuda">
+              Solicitar Ayuda
+            </button>
+            <p id="help-feedback" class="help-feedback hidden"></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="js/roles/paciente.js"></script>
+  <script src="env.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
+    import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
+    import { getMessaging, getToken, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js"
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      where,
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
+
+    const firebaseConfig = {
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
+    }
+
+    const app = initializeApp(firebaseConfig)
+    const db = getFirestore(app)
+    window.firebaseApp = app
+    window.db = db
+    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+
+    isAnalyticsSupported()
+      .then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } })
+      .catch(() => {})
+
+    isMessagingSupported()
+      .then(async (s) => {
+        if (!s) return
+        try {
+          const messaging = getMessaging(app)
+          const permission = await Notification.requestPermission()
+          if (permission === "granted") {
+            const registration = await navigator.serviceWorker.ready
+            const token = await getToken(messaging, {
+              vapidKey: window.__ENV.VAPID_KEY,
+              serviceWorkerRegistration: registration,
+            })
+            if (token) localStorage.setItem("fcm_token", token)
+          }
+        } catch (e) {}
+      })
+      .catch(() => {})
+  </script>
+  <div id="scanner-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-scanner">&times;</button>
+      <h2>Escanear QR</h2>
+      <video id="qr-video" autoplay playsinline style="width:100%"></video>
+      <canvas id="qr-canvas" class="hidden"></canvas>
+    </div>
+  </div>
+</body>
+</html>
+</file>
+
+<file path="service-worker.js">
+/**
+ * Service Worker para PWA
+ * - Cache App Shell
+ * - Manejo offline
+ * - Push notifications
+ */
+
+const CACHE_NAME = "hospital-pwa-v1"
+const ASSETS_TO_CACHE = [
+  "/",
+  "/index.html",
+  "/admin_isla.html",
+  "/superadmin.html",
+  "/enfermero.html",
+  "/paciente.html",
+  "/manifest.json",
+  "/css/styles.css",
+  "/js/app.js",
+  "/js/utils/api.js",
+  "/js/roles/adminIsla.js",
+  "/js/roles/enfermero.js",
+  "/js/roles/paciente.js",
+  "/js/roles/superadmin.js",
+]
+
+// ============================================
+// INSTALL
+// ============================================
+
+self.addEventListener("install", (event) => {
+  console.log("[v0] Service Worker - Installing...")
+
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("[v0] Caching App Shell")
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
+        console.log("[v0] Cache addAll error (some assets may not be available yet):", err)
+        // Continuar sin fallar
+        return Promise.resolve()
+      })
+    }),
+  )
+
+  self.skipWaiting()
+})
+
+// ============================================
+// ACTIVATE
+// ============================================
+
+self.addEventListener("activate", (event) => {
+  console.log("[v0] Service Worker - Activating...")
+
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log("[v0] Deleting old cache:", cacheName)
+            return caches.delete(cacheName)
+          }
+        }),
+      )
+    }),
+  )
+
+  self.clients.claim()
+})
+
+// ============================================
+// FETCH
+// ============================================
+
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url)
+
+  // No interceptar navegaciones para evitar problemas con redirecciones del hosting
+  if (event.request.mode === "navigate") {
+    event.respondWith(fetch(event.request))
+    return
+  }
+
+  // Evitar interferir con recursos de terceros (Firebase/Google, CDNs, etc.)
+  if (url.origin !== self.location.origin) {
+    event.respondWith(fetch(event.request))
+    return
+  }
+
+  // Estrategia: Network first para API, cache first para estáticos
+  if (url.pathname.startsWith("/api/")) {
+    // Network first para API
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const cache = caches.open(CACHE_NAME)
+            cache.then((c) => c.put(event.request, response.clone()))
+          }
+          return response
+        })
+        .catch(async () => {
+          const cached = await caches.match(event.request)
+          if (cached) return cached
+          return new Response(JSON.stringify({ success: false, offline: true }), {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          })
+        }),
+    )
+  } else {
+    // Cache first para estáticos
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) return response
+
+        return fetch(event.request)
+          .then((response) => {
+            if (!response || response.status !== 200 || response.type !== "basic") {
+              return response
+            }
+
+            const responseToCache = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache)
+            })
+
+            return response
+          })
+          .catch(() => {
+            // Offline fallback
+            return new Response("Offline - archivo no disponible", {
+              status: 503,
+              statusText: "Service Unavailable",
+              headers: new Headers({
+                "Content-Type": "text/plain",
+              }),
+            })
+          })
+      }),
+    )
+  }
+})
+
+// ============================================
+// PUSH NOTIFICATIONS
+// ============================================
+
+/**
+ * TODO: Configurar push notifications con servidor
+ * Ejemplo de cómo recibir push events desde el servidor
+ */
+self.addEventListener("push", (event) => {
+  console.log("[v0] Push notification received:", event)
+
+  if (!event.data) {
+    console.log("[v0] Push sin datos")
+    return
+  }
+
+  try {
+    const data = event.data.json()
+    const fallbackBody = data && data.data && (data.data.cama_id || data.data.paciente)
+      ? `Cama ${data.data.cama_id}${data.data.paciente ? ` - ${data.data.paciente}` : ''}`
+      : "Nueva notificación"
+    const options = {
+      body: data.body || fallbackBody,
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%234a7c9e" width="192" height="192"/><text x="50%" y="50%" font-size="96" fill="white" text-anchor="middle" dy=".3em">H</text></svg>',
+      badge:
+        'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%234a7c9e" width="192" height="192"/><text x="50%" y="50%" font-size="96" fill="white" text-anchor="middle" dy=".3em">H</text></svg>',
+      tag: data.tag || "notification",
+      requireInteraction: data.requireInteraction || false,
+      ...data,
+    }
+
+    event.waitUntil(self.registration.showNotification(data.title || "Nueva Alerta", options))
+  } catch (error) {
+    console.error("[v0] Error procesando push:", error)
+    event.waitUntil(
+      self.registration.showNotification("Hospital Sistema", {
+        body: event.data.text(),
+      }),
+    )
+  }
+})
+
+// ============================================
+// NOTIFICATION CLICK
+// ============================================
+
+self.addEventListener("notificationclick", (event) => {
+  console.log("[v0] Notification clicked:", event.notification.tag)
+
+  event.notification.close()
+
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((clientList) => {
+      // Buscar si ya hay una ventana abierta
+      for (const client of clientList) {
+        if (client.url === "/" && "focus" in client) {
+          return client.focus()
+        }
+      }
+      // Si no hay, abrir una nueva
+      if (clients.openWindow) {
+        return clients.openWindow("/")
+      }
+    }),
+  )
+})
+
+// ============================================
+// MESSAGE EVENTS
+// ============================================
+
+/**
+ * Recibir mensajes desde clients (páginas)
+ * TODO: Implementar según necesidad
+ */
+self.addEventListener("message", (event) => {
+  console.log("[v0] Service Worker - Message:", event.data)
+
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting()
+  }
+})
+</file>
+
+<file path="js/utils/api.js">
+/**
+ * API Client - Stubs para integración con backend
+ * Proporciona métodos para GET, POST, PUT, DELETE
+ * También incluye ejemplo de conexión WebSocket/polling
+ */
+
+const API = {
+  baseURL: (typeof window !== "undefined" && window.location && window.location.origin ? window.location.origin : "") + "/api",
+  timeout: 10000,
+
+  /**
+   * GET request
+   * TODO: conectar con API real
+   */
+  async get(endpoint, params = {}) {
+    console.log(`[v0] API GET: ${endpoint}`, params)
+
+    try {
+      if (window.db) {
+        const { collection, getDocs, query, where } = window.firestore || {}
+        if (endpoint === "/islas") {
+          const snap = await getDocs(collection(window.db, "islas"))
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          return { success: true, data: list }
+        }
+        if (endpoint === "/validate-token") {
+          const basePac = collection(window.db, "pacientes")
+          const snap = await getDocs(query(basePac, where("cama", "==", params.cama_id)))
+          const docItem = snap.docs[0]
+          if (docItem) {
+            const paciente = { id: docItem.id, ...docItem.data() }
+            return { success: true, data: { valid: true, paciente } }
+          }
+          // Si no existe en Firestore, continuar a fallback local
+        }
+        if (endpoint === "/alertas") {
+          const base = collection(window.db, "alertas")
+          const snap = await getDocs(base)
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          return { success: true, data: list }
+        }
+        if (endpoint === "/camas") {
+          const base = collection(window.db, "camas")
+          const snap = params.isla_id ? await getDocs(query(base, where("isla_id", "==", params.isla_id))) : await getDocs(base)
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          return { success: true, data: list }
+        }
+        if (endpoint === "/enfermeros") {
+          const base = collection(window.db, "enfermeros")
+          const snap = params.isla_id ? await getDocs(query(base, where("isla_id", "==", params.isla_id))) : await getDocs(base)
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          return { success: true, data: list }
+        }
+        if (endpoint === "/pacientes") {
+          const base = collection(window.db, "pacientes")
+          const snap = params.isla_id ? await getDocs(query(base, where("isla_id", "==", params.isla_id))) : await getDocs(base)
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          return { success: true, data: list }
+        }
+      }
+    } catch (e) {}
+
+    const mockData = this._getMockData(endpoint, params)
+    if (mockData) {
+      return { success: true, data: mockData }
+    }
+
+    try {
+      const query = new URLSearchParams(params).toString()
+      const url = `${this.baseURL}${endpoint}${query ? "?" + query : ""}`
+
+      const response = await Promise.race([
+        fetch(url, { headers: this._getHeaders() }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), this.timeout)),
+      ])
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return { success: true, data: await response.json() }
+    } catch (error) {
+      console.error("[v0] API Error (GET):", error)
+      return { success: false, error: error.message }
+    }
+  },
+
+  /**
+   * POST request
+   * TODO: conectar con API real
+   */
+  async post(endpoint, data = {}) {
+    console.log(`[v0] API POST: ${endpoint}`, data)
+    try {
+      if (window.db) {
+        const { collection, addDoc, doc, updateDoc, serverTimestamp } = window.firestore || {}
+        if (endpoint === "/islas") {
+          const ref = await addDoc(collection(window.db, "islas"), { ...data, created_at: serverTimestamp && serverTimestamp() })
+          return { success: true, data: { id: ref.id, ...data } }
+        }
+        if (endpoint === "/alertas") {
+          const ref = await addDoc(collection(window.db, "alertas"), {
+            ...data,
+            confirmado: false,
+            created_at: serverTimestamp && serverTimestamp(),
+          })
+          return { success: true, data: { id: ref.id, ...data, confirmado: false } }
+        }
+        if (endpoint.startsWith("/alertas/") && endpoint.endsWith("/confirm")) {
+          const id = endpoint.split("/")[2]
+          await updateDoc(doc(window.db, "alertas", id), { confirmado: data.confirmado === true })
+          return { success: true, data: { id } }
+        }
+        if (endpoint.startsWith("/alertas/") && endpoint.endsWith("/dismiss")) {
+          const id = endpoint.split("/")[2]
+          await updateDoc(doc(window.db, "alertas", id), { confirmado: true })
+          return { success: true, data: { id } }
+        }
+        if (endpoint === "/camas") {
+          const ref = await addDoc(collection(window.db, "camas"), { ...data, created_at: serverTimestamp && serverTimestamp() })
+          return { success: true, data: { id: ref.id, ...data } }
+        }
+        if (endpoint === "/enfermeros") {
+          const ref = await addDoc(collection(window.db, "enfermeros"), { ...data, created_at: serverTimestamp && serverTimestamp() })
+          return { success: true, data: { id: ref.id, ...data } }
+        }
+        if (endpoint === "/pacientes") {
+          const ref = await addDoc(collection(window.db, "pacientes"), { ...data, created_at: serverTimestamp && serverTimestamp() })
+          return { success: true, data: { id: ref.id, ...data } }
+        }
+      }
+    } catch (e) {}
+
+    try {
+      if (endpoint === "/notify") {
+        const raw = localStorage.getItem("last_notify")
+        const arr = raw ? JSON.parse(raw) : []
+        arr.unshift({ ...data, at: Date.now() })
+        localStorage.setItem("last_notify", JSON.stringify(arr))
+        return { success: true, data: { ok: true } }
+      }
+      const response = await Promise.race([
+        fetch(`${this.baseURL}${endpoint}`, {
+          method: "POST",
+          headers: this._getHeaders(),
+          body: JSON.stringify(data),
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), this.timeout)),
+      ])
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return { success: true, data: await response.json() }
+    } catch (error) {
+      console.error("[v0] API Error (POST):", error)
+      return { success: false, error: error.message }
+    }
+  },
+
+  /**
+   * PUT request
+   * TODO: conectar con API real
+   */
+  async put(endpoint, data = {}) {
+    console.log(`[v0] API PUT: ${endpoint}`, data)
+    try {
+      if (window.db) {
+        const { doc, updateDoc } = window.firestore || {}
+        const parts = endpoint.split("/").filter(Boolean)
+        if (parts.length === 2) {
+          const col = parts[0]
+          const id = parts[1]
+          if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+            await updateDoc(doc(window.db, col, id), data)
+            return { success: true, data: { id } }
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Fallback localStorage para colecciones conocidas
+    try {
+      const parts = endpoint.split("/").filter(Boolean)
+      if (parts.length === 2) {
+        const col = parts[0]
+        const id = parts[1]
+        if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+          const raw = localStorage.getItem(col)
+          const arr = raw ? JSON.parse(raw) : []
+          const updated = arr.map((item) => (item.id === id ? { ...item, ...data } : item))
+          localStorage.setItem(col, JSON.stringify(updated))
+          return { success: true, data: { id } }
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const response = await Promise.race([
+        fetch(`${this.baseURL}${endpoint}`, {
+          method: "PUT",
+          headers: this._getHeaders(),
+          body: JSON.stringify(data),
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), this.timeout)),
+      ])
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return { success: true, data: await response.json() }
+    } catch (error) {
+      console.error("[v0] API Error (PUT):", error)
+      return { success: false, error: error.message }
+    }
+  },
+
+  /**
+   * DELETE request
+   * TODO: conectar con API real
+   */
+  async delete(endpoint) {
+    console.log(`[v0] API DELETE: ${endpoint}`)
+    try {
+      if (window.db) {
+        const { doc, deleteDoc } = window.firestore || {}
+        const parts = endpoint.split("/").filter(Boolean)
+        if (parts.length === 2) {
+          const col = parts[0]
+          const id = parts[1]
+          if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+            await deleteDoc(doc(window.db, col, id))
+            return { success: true, data: { id } }
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Fallback localStorage para colecciones conocidas
+    try {
+      const parts = endpoint.split("/").filter(Boolean)
+      if (parts.length === 2) {
+        const col = parts[0]
+        const id = parts[1]
+        if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+          const raw = localStorage.getItem(col)
+          const arr = raw ? JSON.parse(raw) : []
+          const updated = arr.filter((item) => item.id !== id)
+          localStorage.setItem(col, JSON.stringify(updated))
+          return { success: true, data: { id } }
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const response = await Promise.race([
+        fetch(`${this.baseURL}${endpoint}`, {
+          method: "DELETE",
+          headers: this._getHeaders(),
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), this.timeout)),
+      ])
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return { success: true, data: await response.json() }
+    } catch (error) {
+      console.error("[v0] API Error (DELETE):", error)
+      return { success: false, error: error.message }
+    }
+  },
+
+  _getHeaders() {
+    const token = localStorage.getItem("auth_token")
+    return {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    }
+  },
+
+  /**
+   * Mock data para demo - eliminar cuando se conecte API real
+   */
+  _getMockData(endpoint, params) {
+    if (endpoint === "/validate-token") {
+      // Buscar paciente por cama en almacenamiento local
+      const rawPac = localStorage.getItem("pacientes")
+      if (rawPac) {
+        try {
+          const arr = JSON.parse(rawPac)
+          const pac = arr.find((p) => String(p.cama) === String(params.cama_id))
+          if (pac) return { valid: true, paciente: pac }
+        } catch {}
+      }
+      // Sin demo: si no se encuentra, marcar inválido
+      return { valid: false }
+    }
+
+    if (endpoint === "/camas") {
+      const raw = localStorage.getItem("camas")
+      if (raw) {
+        const arr = JSON.parse(raw)
+        return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
+      }
+      return []
+    }
+
+    if (endpoint === "/enfermeros") {
+      const raw = localStorage.getItem("enfermeros")
+      if (raw) {
+        const arr = JSON.parse(raw)
+        return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
+      }
+      return []
+    }
+
+    if (endpoint === "/pacientes") {
+      const raw = localStorage.getItem("pacientes")
+      if (raw) {
+        const arr = JSON.parse(raw)
+        return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
+      }
+      return []
+    }
+
+    if (endpoint === "/islas") {
+      const raw = localStorage.getItem("islas")
+      return raw ? JSON.parse(raw) : []
+    }
+
+    if (endpoint === "/alertas") {
+      const raw = localStorage.getItem("alertas")
+      return raw ? JSON.parse(raw) : []
+    }
+
+    return null
+  },
+}
+
+// ============================================
+// REALTIME CONNECTION - WebSocket / Polling
+// ============================================
+
+const RealtimeConnection = {
+  ws: null,
+  isConnected: false,
+  reconnectAttempts: 0,
+  maxReconnectAttempts: 5,
+  reconnectDelay: 3000,
+  listeners: {},
+  lastWsURL: null,
+
+  /**
+   * Conectar a WebSocket
+   * TODO: reemplazar con URL real del servidor
+   */
+  connect(wsURL) {
+    console.log("[v0] Intentando conectar WebSocket...")
+
+    const url = wsURL || (typeof window !== "undefined" && window.WS_URL ? window.WS_URL : null)
+    if (!url) {
+      return
+    }
+
+    try {
+      this.ws = new WebSocket(url)
+      this.lastWsURL = url
+
+      this.ws.onopen = () => {
+        console.log("[v0] WebSocket conectado")
+        this.isConnected = true
+        this.reconnectAttempts = 0
+        this.emit("connected")
+      }
+
+      this.ws.onmessage = (event) => {
+        const message = JSON.parse(event.data)
+        console.log("[v0] WebSocket mensaje:", message)
+        this.emit("message", message)
+      }
+
+      this.ws.onerror = (error) => {
+        console.error("[v0] WebSocket error:", error)
+        this.emit("error", error)
+      }
+
+      this.ws.onclose = () => {
+        console.log("[v0] WebSocket desconectado")
+        this.isConnected = false
+        this.reconnect()
+      }
+    } catch (error) {
+      console.error("[v0] Error al crear WebSocket:", error)
+      this.reconnect()
+    }
+  },
+
+  reconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++
+      console.log(`[v0] Reintentando conexión (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`)
+      setTimeout(() => this.connect(this.lastWsURL), this.reconnectDelay)
+    }
+  },
+
+  send(data) {
+    if (this.isConnected && this.ws) {
+      this.ws.send(JSON.stringify(data))
+    }
+  },
+
+  /**
+   * Alternativa: Polling con setInterval
+   * TODO: configurar URL real del servidor
+   */
+  startPolling(endpoint = "/alertas", interval = 3000) {
+    console.log("[v0] Iniciando polling...")
+
+    const poll = async () => {
+      const result = await API.get(endpoint)
+      if (result.success && result.data) {
+        this.emit("message", { type: "alert", data: result.data })
+      }
+    }
+
+    // Primer polling inmediato
+    poll()
+
+    // Polls periódicos
+    return setInterval(poll, interval)
+  },
+
+  on(event, callback) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = []
+    }
+    this.listeners[event].push(callback)
+  },
+
+  emit(event, data) {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach((callback) => callback(data))
+    }
+  },
+}
+</file>
+
+<file path="vercel.json">
+{
+  "version": 2,
+  "outputDirectory": ".",
+  "buildCommand": "",
+  "headers": [
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    }
+  ]
+}
+</file>
+
+</files>
