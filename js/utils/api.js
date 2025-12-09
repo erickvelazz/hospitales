@@ -174,6 +174,22 @@ const API = {
       }
     } catch (e) {}
 
+    // Fallback localStorage para colecciones conocidas
+    try {
+      const parts = endpoint.split("/").filter(Boolean)
+      if (parts.length === 2) {
+        const col = parts[0]
+        const id = parts[1]
+        if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+          const raw = localStorage.getItem(col)
+          const arr = raw ? JSON.parse(raw) : []
+          const updated = arr.map((item) => (item.id === id ? { ...item, ...data } : item))
+          localStorage.setItem(col, JSON.stringify(updated))
+          return { success: true, data: { id } }
+        }
+      }
+    } catch (e) {}
+
     try {
       const response = await Promise.race([
         fetch(`${this.baseURL}${endpoint}`, {
@@ -209,6 +225,22 @@ const API = {
             await deleteDoc(doc(window.db, col, id))
             return { success: true, data: { id } }
           }
+        }
+      }
+    } catch (e) {}
+
+    // Fallback localStorage para colecciones conocidas
+    try {
+      const parts = endpoint.split("/").filter(Boolean)
+      if (parts.length === 2) {
+        const col = parts[0]
+        const id = parts[1]
+        if (["islas", "camas", "enfermeros", "pacientes", "alertas"].includes(col)) {
+          const raw = localStorage.getItem(col)
+          const arr = raw ? JSON.parse(raw) : []
+          const updated = arr.filter((item) => item.id !== id)
+          localStorage.setItem(col, JSON.stringify(updated))
+          return { success: true, data: { id } }
         }
       }
     } catch (e) {}
@@ -252,16 +284,8 @@ const API = {
           if (pac) return { valid: true, paciente: pac }
         } catch {}
       }
-      return {
-        valid: true,
-        paciente: {
-          id: params.cama_id || "P001",
-          nombre: "Juan García López",
-          cama: params.cama_id || "101",
-          tratamiento: "Cuidados generales",
-          notas: "Paciente estable, revisar tensión cada 4 horas",
-        },
-      }
+      // Sin demo: si no se encuentra, marcar inválido
+      return { valid: false }
     }
 
     if (endpoint === "/camas") {
@@ -270,12 +294,7 @@ const API = {
         const arr = JSON.parse(raw)
         return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
       }
-      return [
-        { id: "101", estado: "ocupada", paciente: "Juan García", enfermero: "María" },
-        { id: "102", estado: "libre", paciente: null, enfermero: "María" },
-        { id: "103", estado: "ocupada", paciente: "Carlos López", enfermero: "Pedro" },
-        { id: "104", estado: "libre", paciente: null, enfermero: "Pedro" },
-      ]
+      return []
     }
 
     if (endpoint === "/enfermeros") {
@@ -284,11 +303,7 @@ const API = {
         const arr = JSON.parse(raw)
         return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
       }
-      return [
-        { id: "E001", nombre: "María Rodríguez", camas: ["101", "102"] },
-        { id: "E002", nombre: "Pedro Martínez", camas: ["103", "104"] },
-        { id: "E003", nombre: "Ana García", camas: ["105", "106"] },
-      ]
+      return []
     }
 
     if (endpoint === "/pacientes") {
@@ -297,11 +312,7 @@ const API = {
         const arr = JSON.parse(raw)
         return params.isla_id ? arr.filter((x) => x.isla_id === params.isla_id) : arr
       }
-      return [
-        { id: "P001", nombre: "Juan García López", cama: "101" },
-        { id: "P002", nombre: "Carlos López", cama: "103" },
-        { id: "P003", nombre: "Rosa Martínez", cama: "105" },
-      ]
+      return []
     }
 
     if (endpoint === "/islas") {

@@ -86,9 +86,13 @@ self.addEventListener("fetch", (event) => {
           }
           return response
         })
-        .catch(() => {
-          // Fallback a cache si falla la red
-          return caches.match(event.request)
+        .catch(async () => {
+          const cached = await caches.match(event.request)
+          if (cached) return cached
+          return new Response(JSON.stringify({ success: false, offline: true }), {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          })
         }),
     )
   } else {

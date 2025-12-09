@@ -123,6 +123,7 @@
   <script src="js/utils/api.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.5.0/dist/easy.qrcode.min.js"></script>
   <script src="js/roles/adminIsla.js"></script>
+  <script src="env.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
     import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
@@ -142,13 +143,13 @@
     } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
 
     const firebaseConfig = {
-      apiKey: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
-      authDomain: "hospitales-33dbe.firebaseapp.com",
-      projectId: "hospitales-33dbe",
-      storageBucket: "hospitales-33dbe.firebasestorage.app",
-      messagingSenderId: "843923551776",
-      appId: "1:843923551776:web:5016a26df56d77394fae45",
-      measurementId: "G-X2YJSQBYB0",
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
     }
 
     const app = initializeApp(firebaseConfig)
@@ -170,7 +171,7 @@
           if (permission === "granted") {
             const registration = await navigator.serviceWorker.ready
             const token = await getToken(messaging, {
-              vapidKey: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+              vapidKey: window.__ENV.VAPID_KEY,
               serviceWorkerRegistration: registration,
             })
             if (token) localStorage.setItem("fcm_token", token)

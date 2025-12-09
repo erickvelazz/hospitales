@@ -19,6 +19,15 @@
     </header>
 
     <main class="main-content">
+      <!-- Login por QR -->
+      <div class="login-container hidden" id="enfermero-login">
+        <div class="login-card">
+          <h2>Acceso Enfermero</h2>
+          <p class="small-text">Escanea tu QR para iniciar sesión</p>
+          <button class="btn btn-primary btn-full" id="btn-scan-qr">Escanear QR</button>
+        </div>
+      </div>
+
       <div class="enfermero-dashboard">
         <!-- Status Bar -->
         <div class="status-bar">
@@ -69,9 +78,20 @@
     </div>
   </div>
 
+  <div id="scanner-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="btn-close-scanner">&times;</button>
+      <h2>Escanear QR</h2>
+      <video id="qr-video" autoplay playsinline style="width:100%"></video>
+      <canvas id="qr-canvas" class="hidden"></canvas>
+    </div>
+  </div>
+
   <script src="js/app.js"></script>
   <script src="js/utils/api.js"></script>
   <script src="js/roles/enfermero.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="env.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"
     import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"
@@ -81,6 +101,7 @@
       collection,
       addDoc,
       getDocs,
+      getDoc,
       doc,
       setDoc,
       updateDoc,
@@ -91,20 +112,20 @@
     } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js"
 
     const firebaseConfig = {
-      apiKey: "AIzaSyD88Hfq2SwLKFBN8YgBEgGaOOy_wgsTH_A",
-      authDomain: "hospitales-33dbe.firebaseapp.com",
-      projectId: "hospitales-33dbe",
-      storageBucket: "hospitales-33dbe.firebasestorage.app",
-      messagingSenderId: "843923551776",
-      appId: "1:843923551776:web:5016a26df56d77394fae45",
-      measurementId: "G-X2YJSQBYB0",
+      apiKey: window.__ENV.FIREBASE_API_KEY,
+      authDomain: window.__ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.__ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.__ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.__ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.__ENV.FIREBASE_APP_ID,
+      measurementId: window.__ENV.FIREBASE_MEASUREMENT_ID,
     }
 
     const app = initializeApp(firebaseConfig)
     const db = getFirestore(app)
     window.firebaseApp = app
     window.db = db
-    window.firestore = { collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
+    window.firestore = { collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, where }
 
     isAnalyticsSupported()
       .then((s) => { if (s) { try { getAnalytics(app) } catch (e) {} } })
@@ -119,7 +140,7 @@
           if (permission === "granted") {
             const registration = await navigator.serviceWorker.ready
             const token = await getToken(messaging, {
-              vapidKey: "BCyjTGXLPe_I-vgE08NU5WbR962bHxXOByIoePdPlflglpoxdaqpoivxbGcWqxNw45BTBZT8kVDCLTNReeZ1sx8",
+              vapidKey: window.__ENV.VAPID_KEY,
               serviceWorkerRegistration: registration,
             })
             if (token) localStorage.setItem("fcm_token", token)

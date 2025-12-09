@@ -29,6 +29,27 @@ class AdminIsla {
     const form = document.getElementById("isla-login-form")
     const dash = document.querySelector(".admin-dashboard")
 
+    // Credenciales por defecto para demo/local: admin/admin123 e isla/isla123
+    const rawAccounts = localStorage.getItem("isla_accounts")
+    if (!rawAccounts) {
+      localStorage.setItem(
+        "isla_accounts",
+        JSON.stringify([
+          { id: "admin-1", username: "admin", password: "admin123", nombre: "Administrador" },
+          { id: "isla-1", username: "isla", password: "isla123", nombre: "Usuario Isla" },
+        ]),
+      )
+    } else {
+      try {
+        const accs = JSON.parse(rawAccounts)
+        const hasAdmin = accs.some((a) => a.username === "admin")
+        if (!hasAdmin) {
+          accs.push({ id: "admin-1", username: "admin", password: "admin123", nombre: "Administrador" })
+          localStorage.setItem("isla_accounts", JSON.stringify(accs))
+        }
+      } catch {}
+    }
+
     const user = Session.getUser && Session.getUser()
     if (!user || user.role !== "isla") {
       dash.classList.add("hidden")
@@ -69,19 +90,19 @@ class AdminIsla {
     })
   }
 
-  loadData() {
-    // Cargar mock data
+  async loadData() {
     const u = Session.getUser && Session.getUser()
     const islaId = u && u.id
-    API.get("/camas", { isla_id: islaId }).then((res) => {
-      if (res.success) this.mockCamas = res.data
-    })
-    API.get("/enfermeros", { isla_id: islaId }).then((res) => {
-      if (res.success) this.mockEnfermeros = res.data
-    })
-    API.get("/pacientes", { isla_id: islaId }).then((res) => {
-      if (res.success) this.mockPacientes = res.data
-    })
+    const [cRes, eRes, pRes] = await Promise.all([
+      API.get("/camas", { isla_id: islaId }),
+      API.get("/enfermeros", { isla_id: islaId }),
+      API.get("/pacientes", { isla_id: islaId }),
+    ])
+    if (cRes.success) this.mockCamas = cRes.data
+    if (eRes.success) this.mockEnfermeros = eRes.data
+    if (pRes.success) this.mockPacientes = pRes.data
+    this.renderAllTabs()
+    this.updateQRIds()
   }
 
   setupEventListeners() {
@@ -305,15 +326,46 @@ class AdminIsla {
         })
     } else if (this.currentModal === "cama_edit") {
       const id = this.editEntityId
-      const enfermero = document.getElementById("cama-enfermero").value
-      API.put("/camas/" + id, { enfermero }).then(() => {
-        this.mockCamas = this.mockCamas.map((c) => (c.id === id ? { ...c, enfermero } : c))
+      const newEnfermero = document.getElementById("cama-enfermero").value
+      const camaPrev = this.mockCamas.find((c) => c.id === id)
+      const prevEnfermero = camaPrev && camaPrev.enfermero
+      API.put("/camas/" + id, { enfermero: newEnfermero }).then(() => {
+        this.mockCamas = this.mockCamas.map((c) => (c.id === id ? { ...c, enfermero: newEnfermero } : c))
         const raw = localStorage.getItem("camas")
         const arr = raw ? JSON.parse(raw) : []
         localStorage.setItem(
           "camas",
-          JSON.stringify(arr.map((c) => (c.id === id ? { ...c, enfermero } : c))),
+          JSON.stringify(arr.map((c) => (c.id === id ? { ...c, enfermero: newEnfermero } : c))),
         )
+
+        // Actualizar listas de camas en enfermeros (quitar del anterior, agregar al nuevo)
+        if (prevEnfermero && prevEnfermero !== newEnfermero) {
+          this.mockEnfermeros = this.mockEnfermeros.map((e) =>
+            e.id === prevEnfermero ? { ...e, camas: (e.camas || []).filter((x) => x !== id) } : e,
+          )
+          const rawE = localStorage.getItem("enfermeros")
+          const arrE = rawE ? JSON.parse(rawE) : []
+          localStorage.setItem(
+            "enfermeros",
+            JSON.stringify(
+              arrE.map((e) => (e.id === prevEnfermero ? { ...e, camas: (e.camas || []).filter((x) => x !== id) } : e)),
+            ),
+          )
+          API.put("/enfermeros/" + prevEnfermero, { camas: (this.mockEnfermeros.find((e) => e.id === prevEnfermero)?.camas) || [] }).catch(() => {})
+        }
+        if (newEnfermero) {
+          const target = this.mockEnfermeros.find((e) => e.id === newEnfermero)
+          const updated = target ? Array.from(new Set([...(target.camas || []), id])) : [id]
+          this.mockEnfermeros = this.mockEnfermeros.map((e) => (e.id === newEnfermero ? { ...e, camas: updated } : e))
+          const rawE2 = localStorage.getItem("enfermeros")
+          const arrE2 = rawE2 ? JSON.parse(rawE2) : []
+          localStorage.setItem(
+            "enfermeros",
+            JSON.stringify(arrE2.map((e) => (e.id === newEnfermero ? { ...e, camas: updated } : e))),
+          )
+          API.put("/enfermeros/" + newEnfermero, { camas: updated }).catch(() => {})
+        }
+
         this.renderAllTabs()
       })
     } else if (this.currentModal === "enfermero_edit") {
@@ -335,6 +387,8 @@ class AdminIsla {
       const nombre = document.getElementById("paciente-nombre").value
       const cama = document.getElementById("paciente-cama").value
       const tratamiento = document.getElementById("paciente-tratamiento").value
+      const prev = this.mockPacientes.find((p) => p.id === id)
+      const camaPrev = prev ? prev.cama : ""
       API.put("/pacientes/" + id, { nombre, cama, tratamiento }).then(() => {
         this.mockPacientes = this.mockPacientes.map((p) => (p.id === id ? { ...p, nombre, cama, tratamiento } : p))
         const raw = localStorage.getItem("pacientes")
@@ -343,6 +397,20 @@ class AdminIsla {
           "pacientes",
           JSON.stringify(arr.map((p) => (p.id === id ? { ...p, nombre, cama, tratamiento } : p))),
         )
+        if (camaPrev && camaPrev !== cama) {
+          this.mockCamas = this.mockCamas.map((c) => (c.id === camaPrev ? { ...c, estado: "libre", paciente: "" } : c))
+          const rawC = localStorage.getItem("camas")
+          const arrC = rawC ? JSON.parse(rawC) : []
+          localStorage.setItem("camas", JSON.stringify(arrC.map((c) => (c.id === camaPrev ? { ...c, estado: "libre", paciente: "" } : c))))
+          API.put("/camas/" + camaPrev, { estado: "libre", paciente: "" }).catch(() => {})
+        }
+        if (cama) {
+          this.mockCamas = this.mockCamas.map((c) => (c.id === cama ? { ...c, estado: "ocupada", paciente: nombre } : c))
+          const rawC2 = localStorage.getItem("camas")
+          const arrC2 = rawC2 ? JSON.parse(rawC2) : []
+          localStorage.setItem("camas", JSON.stringify(arrC2.map((c) => (c.id === cama ? { ...c, estado: "ocupada", paciente: nombre } : c))))
+          API.put("/camas/" + cama, { estado: "ocupada", paciente: nombre }).catch(() => {})
+        }
         this.renderAllTabs()
       })
     }

@@ -24,6 +24,10 @@ class Enfermero {
 
   init() {
     this.checkAuth()
+    if (!Session.isLoggedIn()) {
+      this.showScannerUI()
+      return
+    }
     this.registerFcmToken()
     this.setupNotifications()
     this.loadData()
@@ -32,19 +36,102 @@ class Enfermero {
   }
 
   checkAuth() {
-    // Login híbrido: si hay user_id en URL, solo pedir PIN
+    const dash = document.querySelector(".enfermero-dashboard")
+    const loginBox = document.getElementById("enfermero-login")
     if (this.userId) {
-      console.log("[v0] Login rápido con user_id:", this.userId)
-      // Para demo, autenticar directamente
-      const user = { role: "enfermero", id: this.userId, nombre: "Enfermero Demo" }
+      const user = { role: "enfermero", id: this.userId, nombre: "Enfermero" }
       Session.setUser(user)
       Session.setToken("demo-token-" + generateUUID())
-    } else if (!Session.isLoggedIn()) {
-      // Login completo - para demo, permitir
-      const user = { role: "enfermero", id: "E001", nombre: "Enfermero Demo" }
-      Session.setUser(user)
-      Session.setToken("demo-token-" + generateUUID())
+      dash.classList.remove("hidden")
+      loginBox.classList.add("hidden")
+      return
     }
+    if (!Session.isLoggedIn()) {
+      dash.classList.add("hidden")
+      loginBox.classList.remove("hidden")
+    }
+  }
+
+  showScannerUI() {
+    const openBtn = document.getElementById("btn-scan-qr")
+    const modal = document.getElementById("scanner-modal")
+    const closeBtn = document.getElementById("btn-close-scanner")
+    openBtn?.addEventListener("click", () => {
+      modal.classList.remove("hidden")
+      this.startQrScanner()
+    })
+    closeBtn?.addEventListener("click", () => {
+      modal.classList.add("hidden")
+      this.stopQrScanner()
+    })
+  }
+
+  startQrScanner() {
+    const video = document.getElementById("qr-video")
+    const canvas = document.getElementById("qr-canvas")
+    const ctx = canvas.getContext("2d")
+    const constraints = { video: { facingMode: "environment" } }
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        this.qrStream = stream
+        video.srcObject = stream
+        this.qrInterval = setInterval(() => {
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            try {
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+              const code = window.jsQR ? window.jsQR(imageData.data, canvas.width, canvas.height) : null
+              if (code && code.data) {
+                this.onQrDetected(code.data)
+              }
+            } catch {}
+          }
+        }, 250)
+      })
+      .catch(() => {
+        showToast("No se pudo acceder a la cámara", "error")
+      })
+  }
+
+  stopQrScanner() {
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (this.qrStream) {
+      this.qrStream.getTracks().forEach((t) => t.stop())
+      this.qrStream = null
+    }
+  }
+
+  onQrDetected(text) {
+    // Buscar user_id en el texto (URL o contenido)
+    let uid = null
+    try {
+      const m = text.match(/user_id=([^&]+)/)
+      uid = m && m[1]
+      if (!uid && /^E\w+/.test(text)) uid = text
+    } catch {}
+    if (!uid) return
+
+    this.stopQrScanner()
+    document.getElementById("scanner-modal").classList.add("hidden")
+
+    this.userId = uid
+    const user = { role: "enfermero", id: uid, nombre: "Enfermero" }
+    Session.setUser(user)
+    Session.setToken("demo-token-" + generateUUID())
+
+    document.getElementById("enfermero-login")?.classList.add("hidden")
+    document.querySelector(".enfermero-dashboard")?.classList.remove("hidden")
+
+    this.registerFcmToken()
+    this.setupNotifications()
+    this.loadData()
+    this.setupEventListeners()
+    this.startRealtimeMonitoring()
   }
 
   setupNotifications() {
@@ -67,15 +154,45 @@ class Enfermero {
   }
 
   async loadData() {
-    const camasRes = await API.get("/camas")
-    const enfRes = await API.get("/enfermeros")
-    if (camasRes.success) this.mockCamas = camasRes.data || []
-    if (enfRes.success) {
-      const me = (enfRes.data || []).find((e) => e.id === (this.userId || "E001"))
-      this.assignedBeds = me && Array.isArray(me.camas) ? me.camas : []
+    let nurse = null
+    if (window.db && window.firestore) {
+      const { doc, getDoc } = window.firestore
+      try {
+        const u = Session.getUser && Session.getUser()
+        const id = (u && u.id) || this.userId
+        if (id) {
+          const d = await getDoc(doc(window.db, "enfermeros", id))
+          if (d.exists()) nurse = { id: d.id, ...d.data() }
+        }
+      } catch {}
     }
+
+    if (!nurse) {
+      const u = Session.getUser && Session.getUser()
+      const id = (u && u.id) || this.userId
+      if (id) {
+        const enfRes = await API.get("/enfermeros")
+        if (enfRes.success) nurse = (enfRes.data || []).find((e) => e.id === id)
+      }
+    }
+
+    this.assignedBeds = nurse && Array.isArray(nurse.camas) ? nurse.camas : []
+    const islaId = nurse && nurse.isla_id
+
+    const camasRes = await API.get("/camas", islaId ? { isla_id: islaId } : {})
+    if (camasRes.success) this.mockCamas = camasRes.data || []
+
+    if (!this.assignedBeds || this.assignedBeds.length === 0) {
+      const infer = this.mockCamas.filter((c) => c.enfermero === (nurse && nurse.id)).map((c) => c.id)
+      this.assignedBeds = infer
+    }
+
     const myCamas = this.mockCamas.filter((c) => this.assignedBeds.includes(c.id))
     document.getElementById("cama-count").textContent = myCamas.length
+
+    const header = document.querySelector(".header-title")
+    if (header && nurse && nurse.nombre) header.textContent = `Dashboard Enfermero — ${nurse.nombre}`
+
     this.renderCamas()
   }
 
@@ -136,16 +253,7 @@ class Enfermero {
       return
     }
 
-    this.pollingInterval = RealtimeConnection.startPolling("/alertas", 5000)
-    RealtimeConnection.on("message", (message) => {
-      if (message.type === "alert" && message.data) {
-        const list = Array.isArray(message.data) ? message.data : [message.data]
-        list
-          .filter((a) => !a.confirmado && this.assignedBeds.includes(a.cama_id))
-          .forEach((a) => this.handleNewAlert(a))
-      }
-    })
-    this.simulateDemoAlert()
+    // Sin fallback de demo: operar únicamente con Firestore
   }
 
   simulateDemoAlert() {
@@ -234,7 +342,8 @@ class Enfermero {
     const container = document.getElementById("lista-camas-enfermero")
     if (!container) return
 
-    container.innerHTML = this.mockCamas
+    const list = this.mockCamas.filter((c) => this.assignedBeds.includes(c.id))
+    container.innerHTML = list
       .map((cama) => {
         const estadoClass = cama.estado === "ocupada" ? "alert" : "empty-state"
         return `

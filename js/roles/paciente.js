@@ -21,6 +21,10 @@ class Paciente {
   }
 
   async init() {
+    if (!this.camaId || !this.token) {
+      this.showScannerUI()
+      return
+    }
     await this.validateToken()
     this.setupEventListeners()
   }
@@ -39,10 +43,13 @@ class Paciente {
       this.pacienteData = result.data.paciente
       this.renderPacienteInfo()
       contentDiv.classList.remove("hidden")
+      document.getElementById("paciente-login")?.classList.add("hidden")
+      Session.setUser && Session.setUser({ role: "paciente", id: this.pacienteData.id, nombre: this.pacienteData.nombre })
+      Session.setToken && Session.setToken("token-" + Date.now())
     } else {
       errorDiv.classList.remove("hidden")
       contentDiv.classList.add("hidden")
-      console.log("[v0] Token inválido")
+      this.showScannerUI()
     }
   }
 
@@ -58,6 +65,81 @@ class Paciente {
     if (btn) {
       btn.addEventListener("click", () => this.solicitarAyuda())
     }
+  }
+
+  showScannerUI() {
+    const box = document.getElementById("paciente-login")
+    const btn = document.getElementById("btn-scan-qr")
+    const modal = document.getElementById("scanner-modal")
+    const closeBtn = document.getElementById("btn-close-scanner")
+    if (box) box.classList.remove("hidden")
+    btn && btn.addEventListener("click", () => {
+      modal && modal.classList.remove("hidden")
+      this.startQrScanner()
+    })
+    closeBtn && closeBtn.addEventListener("click", () => {
+      modal && modal.classList.add("hidden")
+      this.stopQrScanner()
+    })
+  }
+
+  startQrScanner() {
+    const video = document.getElementById("qr-video")
+    const canvas = document.getElementById("qr-canvas")
+    const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null
+    const constraints = { video: { facingMode: "environment" } }
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        this.qrStream = stream
+        video.srcObject = stream
+        this.qrInterval = setInterval(() => {
+          if (!ctx) return
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            try {
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+              const code = window.jsQR ? window.jsQR(imageData.data, canvas.width, canvas.height) : null
+              if (code && code.data) {
+                this.onQrDetected(code.data)
+              }
+            } catch {}
+          }
+        }, 250)
+      })
+      .catch(() => {
+        showToast("No se pudo acceder a la cámara", "error")
+      })
+  }
+
+  stopQrScanner() {
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (this.qrStream) {
+      this.qrStream.getTracks().forEach((t) => t.stop())
+      this.qrStream = null
+    }
+  }
+
+  onQrDetected(text) {
+    let cama = null
+    let token = null
+    try {
+      const mC = text.match(/cama_id=([^&]+)/)
+      const mT = text.match(/token=([^&]+)/)
+      cama = mC && mC[1]
+      token = mT && mT[1]
+    } catch {}
+    if (!cama || !token) return
+    this.stopQrScanner()
+    const modal = document.getElementById("scanner-modal")
+    modal && modal.classList.add("hidden")
+    this.camaId = cama
+    this.token = token
+    this.validateToken()
   }
 
   async solicitarAyuda() {
@@ -87,16 +169,16 @@ class Paciente {
       }
 
       try {
-        const enfermeros = await API.get("/enfermeros")
-        if (enfermeros.success) {
-          const nurse = (enfermeros.data || []).find((e) => Array.isArray(e.camas) && e.camas.includes(this.camaId))
-          if (nurse) alert.nurse_id = nurse.id
+        if (window.db && window.firestore) {
+          const { collection, query, where, getDocs } = window.firestore
+          const q = query(collection(window.db, "enfermeros"), where("camas", "array-contains", this.camaId))
+          const snap = await getDocs(q)
+          const docItem = snap.docs[0]
+          if (docItem) alert.nurse_id = docItem.id
         }
       } catch {}
 
-      const raw = localStorage.getItem("alertas")
-      const arr = raw ? JSON.parse(raw) : []
-      localStorage.setItem("alertas", JSON.stringify([alert, ...arr]))
+      // Persistencia en Firestore manejada arriba; sin almacenamiento provisional local
 
       if (alert.nurse_id) {
         const notifyPayload = {
