@@ -12,6 +12,7 @@
   <div id="app" class="app-container">
     <header class="header">
       <h1 class="header-title">Dashboard Enfermero</h1>
+      <p class="header-subtitle" id="user-info"></p>
       <div class="header-controls">
         <button class="btn btn-small" id="btn-toggle-notifications">🔔</button>
         <button class="btn btn-small" id="btn-logout">Salir</button>
@@ -68,6 +69,20 @@
       </div>
     </div>
   </div>
+
+  <div id="qr-auth" class="modal hidden">
+    <div class="modal-content">
+      <h2>Escanea tu QR</h2>
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center;">
+        <video id="qr-video" playsinline autoplay style="width:100%;max-width:420px;border-radius:8px;background:#000"></video>
+        <div id="qr-reader" style="width:100%;max-width:420px"></div>
+        <p class="small-text">Apunta la cámara al QR de acceso del enfermero.</p>
+        <p class="small-text" id="qr-error" style="color:#b85c5c;display:none;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
 
   <script src="js/app.js"></script>
   <script src="js/utils/api.js"></script>

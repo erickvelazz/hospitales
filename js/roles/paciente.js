@@ -17,10 +17,19 @@ class Paciente {
     this.token = getQueryParam("token")
     this.pacienteData = null
     this.helpTimeout = null
+    this.helpInterval = null
+    this.qrDetector = null
+    this.qrStream = null
+    this.qrInterval = null
+    this.html5Qr = null
     this.init()
   }
 
   async init() {
+    if (!this.camaId || !this.token) {
+      await this.startQRAuth()
+      return
+    }
     await this.validateToken()
     this.setupEventListeners()
   }
@@ -37,12 +46,17 @@ class Paciente {
 
     if (result.success && result.data.valid) {
       this.pacienteData = result.data.paciente
+      try {
+        Session.setUser({ role: "paciente", id: this.pacienteData.id, nombre: this.pacienteData.nombre, cama: this.pacienteData.cama })
+        Session.setToken(this.token || ("paciente-token-" + generateUUID()))
+      } catch (_) {}
       this.renderPacienteInfo()
       contentDiv.classList.remove("hidden")
     } else {
       errorDiv.classList.remove("hidden")
       contentDiv.classList.add("hidden")
       console.log("[v0] Token inválido")
+      await this.startQRAuth()
     }
   }
 
@@ -63,10 +77,35 @@ class Paciente {
   async solicitarAyuda() {
     const btn = document.getElementById("btn-solicitar-ayuda")
     const feedback = document.getElementById("help-feedback")
+    const countdownEl = document.getElementById("help-countdown")
 
-    // Deshabilitar botón por 60 segundos
     btn.disabled = true
-    btn.textContent = "Solicitud enviada..."
+    let remaining = 15
+    if (countdownEl) {
+      countdownEl.textContent = `Nueva solicitud disponible en ${remaining}s`
+      countdownEl.classList.remove("hidden")
+    }
+    if (this.helpInterval) {
+      clearInterval(this.helpInterval)
+      this.helpInterval = null
+    }
+    this.helpInterval = setInterval(() => {
+      remaining -= 1
+      if (remaining > 0) {
+        if (countdownEl) {
+          countdownEl.textContent = `Nueva solicitud disponible en ${remaining}s`
+        }
+      } else {
+        clearInterval(this.helpInterval)
+        this.helpInterval = null
+        btn.disabled = false
+        btn.textContent = "Solicitar Ayuda"
+        feedback.classList.add("hidden")
+        if (countdownEl) {
+          countdownEl.classList.add("hidden")
+        }
+      }
+    }, 1000)
 
     try {
       const result = await API.post("/alertas", {
@@ -90,7 +129,10 @@ class Paciente {
         const enfermeros = await API.get("/enfermeros")
         if (enfermeros.success) {
           const nurse = (enfermeros.data || []).find((e) => Array.isArray(e.camas) && e.camas.includes(this.camaId))
-          if (nurse) alert.nurse_id = nurse.id
+          if (nurse) {
+            alert.nurse_id = nurse.id
+            alert.nurse_token = nurse.fcm_token || null
+          }
         }
       } catch {}
 
@@ -98,9 +140,10 @@ class Paciente {
       const arr = raw ? JSON.parse(raw) : []
       localStorage.setItem("alertas", JSON.stringify([alert, ...arr]))
 
-      if (alert.nurse_id) {
+      if (alert.nurse_id && alert.nurse_token) {
         const notifyPayload = {
           nurse_id: alert.nurse_id,
+          token: alert.nurse_token,
           notification: {
             title: "Nueva solicitud de ayuda",
             body: `Cama ${alert.cama_id} - ${this.pacienteData.nombre}`,
@@ -138,12 +181,127 @@ class Paciente {
       console.error("[v0] Error:", error)
     }
 
-    // Reactivar botón después de 60 segundos
-    this.helpTimeout = setTimeout(() => {
-      btn.disabled = false
-      btn.textContent = "Solicitar Ayuda"
-      feedback.classList.add("hidden")
-    }, 60000)
+    if (this.helpTimeout) {
+      clearTimeout(this.helpTimeout)
+      this.helpTimeout = null
+    }
+  }
+  async startQRAuth() {
+    const overlay = document.getElementById("qr-auth")
+    const video = document.getElementById("qr-video")
+    const errorEl = document.getElementById("qr-error")
+    if (!overlay || !video) return
+    overlay.classList.remove("hidden")
+
+    const supported = "BarcodeDetector" in window
+    if (!supported && window.Html5Qrcode) {
+      const readerEl = document.getElementById("qr-reader")
+      if (readerEl) {
+        video.style.display = "none"
+        this.html5Qr = new window.Html5Qrcode("qr-reader")
+        this.html5Qr
+          .start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (raw) => {
+            this.stopQRAuth()
+            if (/^https?:\/\//.test(raw)) {
+              window.location.href = raw
+              return
+            }
+            try {
+              const u = new URL(raw)
+              const cama = u.searchParams.get("cama_id")
+              const token = u.searchParams.get("token")
+              if (cama && token) {
+                window.location.href = `${window.location.origin}/paciente.html?cama_id=${encodeURIComponent(cama)}&token=${encodeURIComponent(token)}`
+              }
+            } catch (_) {}
+          })
+          .catch(() => {
+            if (errorEl) {
+              errorEl.textContent = "No se pudo iniciar la cámara para escanear QR."
+              errorEl.style.display = "block"
+            }
+          })
+        return
+      }
+    }
+    if (!supported) {
+      if (errorEl) {
+        errorEl.textContent = "Tu navegador no soporta escaneo QR."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    try {
+      this.qrDetector = new window.BarcodeDetector({ formats: ["qr_code"] })
+    } catch (e) {
+      if (errorEl) {
+        errorEl.textContent = "No fue posible iniciar el detector de QR."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    try {
+      this.qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      video.srcObject = this.qrStream
+      await video.play()
+    } catch (e) {
+      if (errorEl) {
+        errorEl.textContent = "No se pudo acceder a la cámara."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    const detect = async () => {
+      if (!this.qrDetector) return
+      try {
+        const codes = await this.qrDetector.detect(video)
+        if (codes && codes.length > 0) {
+          const raw = codes[0].rawValue || ""
+          if (raw) {
+            this.stopQRAuth()
+            if (/^https?:\/\//.test(raw)) {
+              window.location.href = raw
+              return
+            }
+            try {
+              const u = new URL(raw)
+              const cama = u.searchParams.get("cama_id")
+              const token = u.searchParams.get("token")
+              if (cama && token) {
+                window.location.href = `${window.location.origin}/paciente.html?cama_id=${encodeURIComponent(cama)}&token=${encodeURIComponent(token)}`
+              }
+            } catch (_) {}
+          }
+        }
+      } catch (_) {}
+    }
+
+    this.qrInterval = setInterval(detect, 500)
+  }
+
+  stopQRAuth() {
+    const overlay = document.getElementById("qr-auth")
+    const video = document.getElementById("qr-video")
+    if (overlay) overlay.classList.add("hidden")
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (video && video.srcObject) {
+      const tracks = video.srcObject.getTracks()
+      tracks.forEach((t) => t.stop())
+      video.srcObject = null
+    }
+    if (this.html5Qr) {
+      try { this.html5Qr.stop().catch(() => {}) } catch (_) {}
+      try { this.html5Qr.clear() } catch (_) {}
+      this.html5Qr = null
+    }
+    this.qrDetector = null
+    this.qrStream = null
   }
 }
 

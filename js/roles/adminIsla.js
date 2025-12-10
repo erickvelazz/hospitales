@@ -217,6 +217,22 @@ class AdminIsla {
           const raw = localStorage.getItem("camas")
           const arr = raw ? JSON.parse(raw) : []
           localStorage.setItem("camas", JSON.stringify([created, ...arr]))
+          if (created.enfermero) {
+            const idx = this.mockEnfermeros.findIndex((e) => e.id === created.enfermero)
+            if (idx >= 0) {
+              const cur = this.mockEnfermeros[idx]
+              const set = new Set([...(cur.camas || []), created.id])
+              const updated = { ...cur, camas: Array.from(set) }
+              this.mockEnfermeros[idx] = updated
+              const rawE = localStorage.getItem("enfermeros")
+              const arrE = rawE ? JSON.parse(rawE) : []
+              localStorage.setItem(
+                "enfermeros",
+                JSON.stringify([updated, ...arrE.filter((e) => e.id !== updated.id)])
+              )
+              API.put("/enfermeros/" + updated.id, { camas: updated.camas }).catch(() => {})
+            }
+          }
           showToast("Cama agregada", "success")
           this.renderAllTabs()
         })
@@ -225,6 +241,21 @@ class AdminIsla {
           const raw = localStorage.getItem("camas")
           const arr = raw ? JSON.parse(raw) : []
           localStorage.setItem("camas", JSON.stringify([cama, ...arr]))
+          if (cama.enfermero) {
+            const idx = this.mockEnfermeros.findIndex((e) => e.id === cama.enfermero)
+            if (idx >= 0) {
+              const cur = this.mockEnfermeros[idx]
+              const set = new Set([...(cur.camas || []), cama.id])
+              const updated = { ...cur, camas: Array.from(set) }
+              this.mockEnfermeros[idx] = updated
+              const rawE = localStorage.getItem("enfermeros")
+              const arrE = rawE ? JSON.parse(rawE) : []
+              localStorage.setItem(
+                "enfermeros",
+                JSON.stringify([updated, ...arrE.filter((e) => e.id !== updated.id)])
+              )
+            }
+          }
           showToast("Cama agregada (local)", "info")
           this.renderAllTabs()
         })
@@ -306,6 +337,7 @@ class AdminIsla {
     } else if (this.currentModal === "cama_edit") {
       const id = this.editEntityId
       const enfermero = document.getElementById("cama-enfermero").value
+      const prev = (this.mockCamas.find((c) => c.id === id) || {}).enfermero || ""
       API.put("/camas/" + id, { enfermero }).then(() => {
         this.mockCamas = this.mockCamas.map((c) => (c.id === id ? { ...c, enfermero } : c))
         const raw = localStorage.getItem("camas")
@@ -314,6 +346,37 @@ class AdminIsla {
           "camas",
           JSON.stringify(arr.map((c) => (c.id === id ? { ...c, enfermero } : c))),
         )
+        if (prev && prev !== enfermero) {
+          const pIdx = this.mockEnfermeros.findIndex((e) => e.id === prev)
+          if (pIdx >= 0) {
+            const cur = this.mockEnfermeros[pIdx]
+            const updated = { ...cur, camas: (cur.camas || []).filter((x) => x !== id) }
+            this.mockEnfermeros[pIdx] = updated
+            const rawE = localStorage.getItem("enfermeros")
+            const arrE = rawE ? JSON.parse(rawE) : []
+            localStorage.setItem(
+              "enfermeros",
+              JSON.stringify([updated, ...arrE.filter((e) => e.id !== updated.id)])
+            )
+            API.put("/enfermeros/" + updated.id, { camas: updated.camas }).catch(() => {})
+          }
+        }
+        if (enfermero) {
+          const nIdx = this.mockEnfermeros.findIndex((e) => e.id === enfermero)
+          if (nIdx >= 0) {
+            const cur = this.mockEnfermeros[nIdx]
+            const set = new Set([...(cur.camas || []), id])
+            const updated = { ...cur, camas: Array.from(set) }
+            this.mockEnfermeros[nIdx] = updated
+            const rawE = localStorage.getItem("enfermeros")
+            const arrE = rawE ? JSON.parse(rawE) : []
+            localStorage.setItem(
+              "enfermeros",
+              JSON.stringify([updated, ...arrE.filter((e) => e.id !== updated.id)])
+            )
+            API.put("/enfermeros/" + updated.id, { camas: updated.camas }).catch(() => {})
+          }
+        }
         this.renderAllTabs()
       })
     } else if (this.currentModal === "enfermero_edit") {
@@ -487,11 +550,28 @@ class AdminIsla {
   }
 
   deleteCama(id) {
+    const cama = this.mockCamas.find((c) => c.id === id)
+    const prev = cama ? cama.enfermero : ""
     API.delete("/camas/" + id).finally(() => {
       this.mockCamas = this.mockCamas.filter((c) => c.id !== id)
       const raw = localStorage.getItem("camas")
       const arr = raw ? JSON.parse(raw) : []
       localStorage.setItem("camas", JSON.stringify(arr.filter((c) => c.id !== id)))
+      if (prev) {
+        const idx = this.mockEnfermeros.findIndex((e) => e.id === prev)
+        if (idx >= 0) {
+          const cur = this.mockEnfermeros[idx]
+          const updated = { ...cur, camas: (cur.camas || []).filter((x) => x !== id) }
+          this.mockEnfermeros[idx] = updated
+          const rawE = localStorage.getItem("enfermeros")
+          const arrE = rawE ? JSON.parse(rawE) : []
+          localStorage.setItem(
+            "enfermeros",
+            JSON.stringify([updated, ...arrE.filter((e) => e.id !== updated.id)])
+          )
+          API.put("/enfermeros/" + updated.id, { camas: updated.camas }).catch(() => {})
+        }
+      }
       this.renderAllTabs()
     })
   }
@@ -524,6 +604,15 @@ class AdminIsla {
       const raw = localStorage.getItem("enfermeros")
       const arr = raw ? JSON.parse(raw) : []
       localStorage.setItem("enfermeros", JSON.stringify(arr.filter((e) => e.id !== id)))
+      this.mockCamas = this.mockCamas.map((c) => (c.enfermero === id ? { ...c, enfermero: "" } : c))
+      const rawC = localStorage.getItem("camas")
+      const arrC = rawC ? JSON.parse(rawC) : []
+      localStorage.setItem(
+        "camas",
+        JSON.stringify(arrC.map((c) => (c.enfermero === id ? { ...c, enfermero: "" } : c)))
+      )
+      const affected = arrC.filter((c) => c.enfermero === id).map((c) => c.id)
+      affected.forEach((cid) => API.put("/camas/" + cid, { enfermero: "" }).catch(() => {}))
       this.renderAllTabs()
     })
   }

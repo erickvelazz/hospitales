@@ -19,11 +19,19 @@ class Enfermero {
     this.pollingInterval = null
     this.notificationsEnabled = true
     this.assignedBeds = []
+    this.qrDetector = null
+    this.qrStream = null
+    this.qrInterval = null
+    this.html5Qr = null
     this.init()
   }
 
   init() {
     this.checkAuth()
+    if (!Session.isLoggedIn()) {
+      this.startQRAuth()
+      return
+    }
     this.registerFcmToken()
     this.setupNotifications()
     this.loadData()
@@ -32,19 +40,139 @@ class Enfermero {
   }
 
   checkAuth() {
-    // Login híbrido: si hay user_id en URL, solo pedir PIN
     if (this.userId) {
-      console.log("[v0] Login rápido con user_id:", this.userId)
-      // Para demo, autenticar directamente
-      const user = { role: "enfermero", id: this.userId, nombre: "Enfermero Demo" }
-      Session.setUser(user)
-      Session.setToken("demo-token-" + generateUUID())
-    } else if (!Session.isLoggedIn()) {
-      // Login completo - para demo, permitir
-      const user = { role: "enfermero", id: "E001", nombre: "Enfermero Demo" }
+      const user = { role: "enfermero", id: this.userId, nombre: "" }
       Session.setUser(user)
       Session.setToken("demo-token-" + generateUUID())
     }
+  }
+
+  async startQRAuth() {
+    const overlay = document.getElementById("qr-auth")
+    const video = document.getElementById("qr-video")
+    const errorEl = document.getElementById("qr-error")
+    if (!overlay || !video) return
+
+    overlay.classList.remove("hidden")
+
+    const supported = "BarcodeDetector" in window
+    if (!supported && window.Html5Qrcode) {
+      const readerEl = document.getElementById("qr-reader")
+      if (readerEl) {
+        video.style.display = "none"
+        this.html5Qr = new window.Html5Qrcode("qr-reader")
+        this.html5Qr
+          .start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (raw) => {
+            this.stopQRAuth()
+            if (/^https?:\/\//.test(raw)) {
+              window.location.href = raw
+              return
+            }
+            let id = ""
+            try {
+              const u = new URL(raw)
+              id = u.searchParams.get("user_id") || ""
+            } catch (_) {
+              const match = raw.match(/user_id=([^&]+)/)
+              id = match ? decodeURIComponent(match[1]) : raw
+            }
+            if (id) {
+              const url = `${window.location.origin}/enfermero.html?user_id=${encodeURIComponent(id)}`
+              window.location.href = url
+            }
+          })
+          .catch(() => {
+            if (errorEl) {
+              errorEl.textContent = "No se pudo iniciar la cámara para escanear QR."
+              errorEl.style.display = "block"
+            }
+          })
+        return
+      }
+    }
+    if (!supported) {
+      if (errorEl) {
+        errorEl.textContent = "Tu navegador no soporta escaneo QR."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    try {
+      this.qrDetector = new window.BarcodeDetector({ formats: ["qr_code"] })
+    } catch (e) {
+      if (errorEl) {
+        errorEl.textContent = "No fue posible iniciar el detector de QR."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    try {
+      this.qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      video.srcObject = this.qrStream
+      await video.play()
+    } catch (e) {
+      if (errorEl) {
+        errorEl.textContent = "No se pudo acceder a la cámara."
+        errorEl.style.display = "block"
+      }
+      return
+    }
+
+    const detect = async () => {
+      if (!this.qrDetector) return
+      try {
+        const codes = await this.qrDetector.detect(video)
+        if (codes && codes.length > 0) {
+          const raw = codes[0].rawValue || ""
+          if (raw) {
+            this.stopQRAuth()
+            if (/^https?:\/\//.test(raw)) {
+              window.location.href = raw
+              return
+            }
+            let id = ""
+            try {
+              const u = new URL(raw)
+              id = u.searchParams.get("user_id") || ""
+            } catch (_) {
+              const match = raw.match(/user_id=([^&]+)/)
+              id = match ? decodeURIComponent(match[1]) : raw
+            }
+            if (id) {
+              const url = `${window.location.origin}/enfermero.html?user_id=${encodeURIComponent(id)}`
+              window.location.href = url
+              return
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    this.qrInterval = setInterval(detect, 500)
+  }
+
+  stopQRAuth() {
+    const overlay = document.getElementById("qr-auth")
+    const video = document.getElementById("qr-video")
+    if (overlay) overlay.classList.add("hidden")
+    if (this.qrInterval) {
+      clearInterval(this.qrInterval)
+      this.qrInterval = null
+    }
+    if (video && video.srcObject) {
+      const tracks = video.srcObject.getTracks()
+      tracks.forEach((t) => t.stop())
+      video.srcObject = null
+    }
+    if (this.html5Qr) {
+      try { this.html5Qr.stop().catch(() => {}) } catch (_) {}
+      try { this.html5Qr.clear() } catch (_) {}
+      this.html5Qr = null
+    }
+    this.qrDetector = null
+    this.qrStream = null
   }
 
   setupNotifications() {
@@ -71,8 +199,17 @@ class Enfermero {
     const enfRes = await API.get("/enfermeros")
     if (camasRes.success) this.mockCamas = camasRes.data || []
     if (enfRes.success) {
-      const me = (enfRes.data || []).find((e) => e.id === (this.userId || "E001"))
+      const me = (enfRes.data || []).find((e) => e.id === (this.userId || (Session.getUser()?.id)))
       this.assignedBeds = me && Array.isArray(me.camas) ? me.camas : []
+      if (me) {
+        const user = Session.getUser() || { role: "enfermero", id: me.id }
+        user.nombre = me.nombre || user.nombre || ""
+        Session.setUser(user)
+        this.renderUserInfo(user)
+      } else {
+        const user = Session.getUser()
+        if (user) this.renderUserInfo(user)
+      }
     }
     const myCamas = this.mockCamas.filter((c) => this.assignedBeds.includes(c.id))
     document.getElementById("cama-count").textContent = myCamas.length
@@ -87,6 +224,13 @@ class Enfermero {
       const map = raw ? JSON.parse(raw) : {}
       map[user.id] = token
       localStorage.setItem("nurse_fcm_tokens", JSON.stringify(map))
+      if (window.db && window.firestore) {
+        try {
+          const { doc, updateDoc, setDoc } = window.firestore
+          const ref = doc(window.db, "enfermeros", user.id)
+          updateDoc(ref, { fcm_token: token }).catch(() => setDoc(ref, { fcm_token: token }, { merge: true }))
+        } catch (_) {}
+      }
     }
   }
 
@@ -209,14 +353,18 @@ class Enfermero {
 
     const alert = this.mockAlertas.find((a) => a.id === alertId)
     if (alert) {
-      alert.confirmado = confirmed
+      alert.confirmado = true
 
-      // Enviar a API
-      API.post("/alertas/" + alertId + "/confirm", { confirmado: confirmed })
+      // Enviar a API usando endpoint correcto
+      if (confirmed) {
+        API.post("/alertas/" + alertId + "/confirm", { confirmado: true })
+      } else {
+        API.post("/alertas/" + alertId + "/dismiss", {})
+      }
 
       const raw = localStorage.getItem("alertas")
       const arr = raw ? JSON.parse(raw) : []
-      const updated = arr.map((a) => (a.id === alertId ? { ...a, confirmado: confirmed } : a))
+      const updated = arr.map((a) => (a.id === alertId ? { ...a, confirmado: true } : a))
       localStorage.setItem("alertas", JSON.stringify(updated))
 
       showToast(confirmed ? "Alerta confirmada" : "Alerta descartada", confirmed ? "success" : "info")
@@ -282,6 +430,13 @@ class Enfermero {
     `,
       )
       .join("")
+  }
+
+  renderUserInfo(user) {
+    const el = document.getElementById("user-info")
+    if (!el || !user) return
+    const name = user.nombre && user.nombre.trim() ? user.nombre.trim() : "Enfermero"
+    el.textContent = `${name} (${user.id})`
   }
 
   viewCamaDetails(camaId) {

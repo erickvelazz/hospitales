@@ -146,12 +146,8 @@
     });
 
     document.getElementById('btn-paciente').addEventListener('click', () => {
-      // Se accede por QR, pero ofrecemos enlace directo para demo
-      const camaId = prompt('Ingresa el ID de cama (demo):');
-      const token = 'demo-token-' + Date.now();
-      if (camaId) {
-        window.location.href = `paciente.html?cama_id=${camaId}&token=${token}`;
-      }
+      // Acceso mediante QR: abrir vista del paciente y escanear
+      window.location.href = 'paciente.html';
     });
 
     document.getElementById('btn-back').addEventListener('click', () => {

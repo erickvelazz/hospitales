@@ -5,7 +5,7 @@
  * - Push notifications
  */
 
-const CACHE_NAME = "hospital-pwa-v1"
+const CACHE_NAME = "hospital-pwa-v2"
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
@@ -143,20 +143,23 @@ self.addEventListener("push", (event) => {
 
   try {
     const data = event.data.json()
-    const fallbackBody = data && data.data && (data.data.cama_id || data.data.paciente)
+    const notif = data.notification || {}
+    const payloadData = data.data || {}
+    const title = notif.title || data.title || "Nueva Alerta"
+    const fallbackBody = payloadData && (payloadData.cama_id || payloadData.paciente)
       ? `Cama ${data.data.cama_id}${data.data.paciente ? ` - ${data.data.paciente}` : ''}`
       : "Nueva notificación"
     const options = {
-      body: data.body || fallbackBody,
+      body: notif.body || data.body || fallbackBody,
       icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%234a7c9e" width="192" height="192"/><text x="50%" y="50%" font-size="96" fill="white" text-anchor="middle" dy=".3em">H</text></svg>',
       badge:
         'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%234a7c9e" width="192" height="192"/><text x="50%" y="50%" font-size="96" fill="white" text-anchor="middle" dy=".3em">H</text></svg>',
-      tag: data.tag || "notification",
-      requireInteraction: data.requireInteraction || false,
-      ...data,
+      tag: data.tag || notif.tag || "notification",
+      requireInteraction: data.requireInteraction || notif.requireInteraction || false,
+      data: payloadData,
     }
 
-    event.waitUntil(self.registration.showNotification(data.title || "Nueva Alerta", options))
+    event.waitUntil(self.registration.showNotification(title, options))
   } catch (error) {
     console.error("[v0] Error procesando push:", error)
     event.waitUntil(
