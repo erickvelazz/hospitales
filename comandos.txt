@@ -19,7 +19,7 @@ docker run --rm \
     --email 20223tn081@utez.edu.mx \
     --authenticator dns-duckdns \
     --dns-duckdns-credentials /opt/duckdns/duckdns.ini \
-    --dns-duckdns-propagation-seconds 120 \
+    --dns-duckdns-propagation-seconds 180 \
     -d hospital-integradora.duckdns.org
 
 # En Windows PowerShell:

@@ -5,8 +5,8 @@ pipeline {
         // Parar los servicios que ya existen o en todo caso hacer caso omiso
         stage('Parando los servicios...') {
             steps {
-                bat '''
-                    docker compose -p demo down || exit /b 0
+                sh '''
+                    docker compose -p demo down || true
                 '''
             }
         }
@@ -14,15 +14,14 @@ pipeline {
         // Eliminar las imágenes creadas por ese proyecto
         stage('Eliminando imágenes anteriores...') {
             steps {
-                bat '''
-                    for /f "tokens=*" %%i in ('docker images --filter "label=com.docker.compose.project=demo" -q') do (
-                        docker rmi -f %%i
-                    )
-                    if errorlevel 1 (
-                        echo No hay imagenes por eliminar
-                    ) else (
-                        echo Imagenes eliminadas correctamente
-                    )
+                sh '''
+                    images=$(docker images --filter "label=com.docker.compose.project=demo" -q)
+                    if [ -z "$images" ]; then
+                        echo "No hay imagenes por eliminar"
+                    else
+                        docker rmi -f $images
+                        echo "Imagenes eliminadas correctamente"
+                    fi
                 '''
             }
         }
@@ -36,9 +35,9 @@ pipeline {
 
         stage('Preparando red y volumen...') {
             steps {
-                bat '''
-                    docker volume create certbot-certs
-                    docker network create demo-net || exit /b 0
+                sh '''
+                    docker volume create certbot-certs || true
+                    docker network create demo-net || true
                 '''
             }
         }
@@ -46,7 +45,7 @@ pipeline {
         // Construir y levantar los servicios
         stage('Construyendo y desplegando servicios...') {
             steps {
-                bat '''
+                sh '''
                     docker compose -p demo up --build -d
                 '''
             }
@@ -65,4 +64,3 @@ pipeline {
         }
     }
 }
-
