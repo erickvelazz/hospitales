@@ -1,0 +1,85 @@
+# Comandos Útiles para Certbot con DuckDNS
+
+## Configuración Inicial
+
+### 1. Construir la imagen de Certbot
+docker build -t certbot:aws-custom -f Dockerfile.certbot .
+
+### 2. Crear el volumen para certificados
+docker volume create certbot-certs
+
+### 3. Generar certificados iniciales (alternativa manual)
+# En Linux/Mac:
+docker run --rm \
+  -v certbot-certs:/etc/letsencrypt \
+  -v $(pwd)/config:/opt/duckdns \
+  certbot:aws-custom certonly \
+    --agree-tos \
+    --no-eff-email \
+    --email 20223tn081@utez.edu.mx \
+    --authenticator dns-duckdns \
+    --dns-duckdns-credentials /opt/duckdns/duckdns.ini \
+    --dns-duckdns-propagation-seconds 120 \
+    -d hospital-integradora.duckdns.org
+
+# En Windows PowerShell:
+docker run --rm `
+  -v certbot-certs:/etc/letsencrypt `
+  -v "$PWD/config:/opt/duckdns:ro" `
+  certbot:aws-custom certonly `
+    --agree-tos `
+    --no-eff-email `
+    --email 20223tn081@utez.edu.mx `
+    --authenticator dns-duckdns `
+    --dns-duckdns-credentials /opt/duckdns/duckdns.ini `
+    --dns-duckdns-propagation-seconds 180`
+    -d hospital-integradora.duckdns.org 
+
+### 4. Iniciar el servicio con docker-compose
+docker compose up -d
+
+## Comandos de Gestión
+
+### Ver logs del contenedor
+docker logs certbot
+
+### Ver logs en tiempo real
+docker logs -f certbot
+
+### Detener el servicio
+docker compose down
+
+### Detener solo el servicio certbot
+docker compose stop certbot
+
+### Reiniciar el servicio
+docker compose restart certbot
+
+### Acceder al contenedor
+docker exec -it certbot sh
+
+### Verificar certificados
+docker exec certbot certbot certificates
+
+### Listar volúmenes
+docker volume ls
+
+### Inspeccionar volumen de certificados
+docker volume inspect certbot-certs
+
+## Configuración de DuckDNS
+
+1. Accede a https://www.duckdns.org/domains con tu cuenta de GitHub
+2. Crea un subdominio en el campo "sub domain"
+3. Haz clic en "add domain"
+4. Actualiza la IP del dominio a tu IP elástica (187.189.214.171)
+5. Haz clic en "update IP"
+6. Copia tu token de DuckDNS (ya configurado: 2e65ba7a-4521-444f-bfbb-045554504e93)
+
+## Notas Importantes
+
+- El token de DuckDNS ya está configurado en config/duckdns.ini
+- Tu IP elástica es: 187.189.214.171
+- Recuerda actualizar el DOMAIN, EMAIL y PASS en config/entrypoint.sh antes de usar
+- El volumen certbot-certs debe crearse antes de iniciar el servicio
+

@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    networks:
+      - demo-net
+    volumes:
+      - certbot-certs:/etc/letsencrypt:ro
+
+  certbot:
+    build:
+      context: .
+      dockerfile: Dockerfile.certbot
+    image: certbot:aws-custom
+    container_name: certbot
+    volumes:
+      - certbot-certs:/etc/letsencrypt
+      - ./config:/opt/duckdns
+      - ./config/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    restart: unless-stopped
+    networks:
+      - demo-net
+
+volumes:
+  certbot-certs:
+    external: true
+
+networks:
+  demo-net:
+    external: true
+
