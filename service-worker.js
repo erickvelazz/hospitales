@@ -93,25 +93,25 @@ self.addEventListener("fetch", (event) => {
         }),
     )
   } else {
-    // Cache first para estáticos
+    // Network first para estáticos (para obtener siempre la versión más reciente)
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) return response
-
-        return fetch(event.request)
-          .then((response) => {
-            if (!response || response.status !== 200 || response.type !== "basic") {
-              return response
-            }
-
+      fetch(event.request)
+        .then((response) => {
+          // Solo cachear respuestas exitosas
+          if (response && response.status === 200 && response.type === "basic") {
             const responseToCache = response.clone()
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, responseToCache)
             })
-
-            return response
-          })
-          .catch(() => {
+          }
+          return response
+        })
+        .catch(() => {
+          // Fallback a cache si falla la red
+          return caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse
+            }
             // Offline fallback
             return new Response("Offline - archivo no disponible", {
               status: 503,
@@ -121,7 +121,7 @@ self.addEventListener("fetch", (event) => {
               }),
             })
           })
-      }),
+        }),
     )
   }
 })
@@ -208,6 +208,13 @@ self.addEventListener("message", (event) => {
   console.log("[v0] Service Worker - Message:", event.data)
 
   if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting()
+    self.skipWaiting().then(() => {
+      // Notificar a todos los clientes que el nuevo service worker está activo
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: "SW_UPDATED" })
+        })
+      })
+    })
   }
 })

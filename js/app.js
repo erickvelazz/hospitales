@@ -15,10 +15,55 @@ if ("serviceWorker" in navigator) {
       .register("service-worker.js")
       .then((registration) => {
         console.log("[v0] Service Worker registrado:", registration)
+
+        // Detectar actualizaciones del service worker
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing
+          
+          if (newWorker) {
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                // Hay una nueva versión disponible
+                console.log("[v0] Nueva versión del Service Worker disponible")
+                // Forzar actualización inmediata
+                newWorker.postMessage({ type: "SKIP_WAITING" })
+                // Recargar la página para usar la nueva versión
+                window.location.reload()
+              }
+            })
+          }
+        })
+
+        // Verificar actualizaciones periódicamente
+        setInterval(() => {
+          registration.update()
+        }, 60000) // Cada minuto
+
+        // Verificar actualizaciones al enfocar la ventana
+        window.addEventListener("focus", () => {
+          registration.update()
+        })
       })
       .catch((error) => {
         console.log("[v0] Error al registrar Service Worker:", error)
       })
+
+    // Escuchar cuando el service worker toma control
+    let refreshing = false
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!refreshing) {
+        refreshing = true
+        window.location.reload()
+      }
+    })
+
+    // Escuchar mensajes del service worker
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "SW_UPDATED") {
+        console.log("[v0] Service Worker actualizado, recargando página...")
+        window.location.reload()
+      }
+    })
   })
 }
 
