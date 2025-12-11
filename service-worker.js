@@ -5,7 +5,8 @@
  * - Push notifications
  */
 
-const CACHE_NAME = "hospital-pwa-v2"
+const CACHE_VERSION = 'v' + new Date().getTime()
+const CACHE_NAME = `app-cache-${CACHE_VERSION}`
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
@@ -30,6 +31,8 @@ const ASSETS_TO_CACHE = [
 self.addEventListener("install", (event) => {
   console.log("[v0] Service Worker - Installing...")
 
+  self.skipWaiting()
+  
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("[v0] Caching App Shell")
@@ -40,8 +43,6 @@ self.addEventListener("install", (event) => {
       })
     }),
   )
-
-  self.skipWaiting()
 })
 
 // ============================================
@@ -52,18 +53,18 @@ self.addEventListener("activate", (event) => {
   console.log("[v0] Service Worker - Activating...")
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log("[v0] Deleting old cache:", cacheName)
-            return caches.delete(cacheName)
-          }
-        }),
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => {
+            console.log("[v0] Deleting old cache:", key)
+            return caches.delete(key)
+          })
       )
-    }),
+    )
   )
-
+  
   self.clients.claim()
 })
 
