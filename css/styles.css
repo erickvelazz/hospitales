@@ -84,7 +84,8 @@ body {
 }
 
 .header {
-  background-color: var(--color-white);
+  /* background-color: var(--color-white); */
+  background-color: #6ba383;
   border-bottom: 1px solid var(--color-border);
   padding: var(--spacing-lg) var(--spacing-base);
   display: flex;
